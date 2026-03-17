@@ -1,0 +1,3292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chiranjeeva Auto Tech — EV Scooter Service</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Outfit:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #050810;
+    --surface: #0c0f1a;
+    --surface2: #121627;
+    --surface3: #1a2038;
+    --border: #1e2540;
+    --border2: #2a3560;
+    --accent: #00e5ff;
+    --accent2: #7b2fff;
+    --accent3: #00ff88;
+    --text: #e8eeff;
+    --text-muted: #5a6488;
+    --text-dim: #2a3050;
+    --yellow: #ffe566;
+    --red: #ff4466;
+    --charge: #00ff88;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Outfit', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* GRID BACKGROUND */
+  body::before {
+    content:'';
+    position:fixed; inset:0;
+    background-image:
+      linear-gradient(rgba(0,229,255,.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,229,255,.025) 1px, transparent 1px);
+    background-size: 48px 48px;
+    pointer-events:none; z-index:0;
+  }
+
+  /* NAV */
+  nav {
+    position:sticky; top:0; z-index:200;
+    display:flex; align-items:center; justify-content:space-between;
+    padding: 0 2rem; height: 60px;
+    background: rgba(5,8,16,.85);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+  }
+  nav::after {
+    content:'';
+    position:absolute; bottom:0; left:0; right:0; height:1px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    opacity:.4;
+  }
+  .logo {
+    font-family:'Rajdhani', sans-serif;
+    font-size:1.15rem; font-weight:700; letter-spacing:2px;
+    display:flex; align-items:center; gap:10px; text-transform:uppercase;
+  }
+  .logo-icon {
+    width:28px; height:28px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border-radius:6px;
+    display:flex; align-items:center; justify-content:center;
+    font-size:.9rem;
+    box-shadow: 0 0 12px rgba(0,229,255,.4);
+  }
+  .logo em { color:var(--accent); font-style:normal; }
+
+  .nav-center { display:flex; gap:2px; }
+  .nav-tab {
+    padding:6px 16px; border-radius:6px; border:none; background:transparent;
+    color:var(--text-muted); font-family:'Outfit',sans-serif; font-size:.85rem;
+    cursor:pointer; transition:all .2s; font-weight:500;
+  }
+  .nav-tab:hover { color:var(--text); background:var(--surface2); }
+  .nav-tab.active { color:var(--accent); background:rgba(0,229,255,.08); }
+
+  .nav-right { display:flex; align-items:center; gap:10px; }
+  .view-badge {
+    padding:3px 10px; border-radius:20px; font-size:.7rem; font-weight:600;
+    letter-spacing:1.5px; text-transform:uppercase; font-family:'JetBrains Mono',monospace;
+  }
+  .view-badge.staff { background:rgba(0,229,255,.1); color:var(--accent); border:1px solid rgba(0,229,255,.25); }
+  .view-badge.customer { background:rgba(123,47,255,.1); color:#a87fff; border:1px solid rgba(123,47,255,.3); }
+  .switch-btn {
+    padding:6px 14px; border-radius:6px;
+    border:1px solid var(--border2); background:transparent;
+    color:var(--text-muted); font-size:.8rem; cursor:pointer;
+    transition:all .2s; font-family:'Outfit',sans-serif;
+  }
+  .switch-btn:hover { color:var(--accent); border-color:var(--accent); box-shadow:0 0 10px rgba(0,229,255,.15); }
+
+  /* PAGES */
+  .page { display:none; animation:fadeUp .3s ease both; position:relative; z-index:1; }
+  .page.active { display:block; }
+  @keyframes fadeUp { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
+
+  /* ========== CUSTOMER VIEW ========== */
+
+  /* HERO */
+  .hero {
+    padding:72px 2rem 56px;
+    text-align:center;
+    position:relative;
+  }
+  .hero-glow {
+    position:absolute; top:0; left:50%; transform:translateX(-50%);
+    width:600px; height:300px;
+    background: radial-gradient(ellipse, rgba(0,229,255,.12) 0%, rgba(123,47,255,.08) 40%, transparent 70%);
+    pointer-events:none;
+  }
+  .hero-tag {
+    display:inline-flex; align-items:center; gap:8px;
+    padding:5px 14px; border-radius:20px;
+    border:1px solid rgba(0,255,136,.25);
+    background:rgba(0,255,136,.06);
+    font-family:'JetBrains Mono', monospace;
+    font-size:.7rem; color:var(--charge); letter-spacing:2px;
+    text-transform:uppercase; margin-bottom:24px;
+  }
+  .hero-tag::before { content:'⚡'; font-size:.8rem; }
+  .hero h1 {
+    font-family:'Rajdhani', sans-serif;
+    font-size:clamp(2.8rem, 7vw, 5.5rem);
+    font-weight:700; letter-spacing:3px; line-height:1;
+    margin-bottom:8px;
+  }
+  .hero h1 .line2 {
+    display:block;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+    background-clip:text;
+  }
+  .hero-sub { color:var(--text-muted); font-size:.95rem; max-width:400px; margin:16px auto 40px; line-height:1.7; }
+
+  /* STATS BAR */
+  .stats-bar {
+    display:flex; justify-content:center; gap:0;
+    max-width:560px; margin:0 auto 56px;
+    border:1px solid var(--border2); border-radius:12px;
+    overflow:hidden; background:var(--surface);
+  }
+  .stat-item { flex:1; padding:16px; text-align:center; border-right:1px solid var(--border); }
+  .stat-item:last-child { border-right:none; }
+  .stat-item .sv { font-family:'Rajdhani',sans-serif; font-size:1.6rem; font-weight:700; color:var(--accent); }
+  .stat-item .sl { font-size:.72rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:1px; margin-top:2px; }
+
+  /* BOOKING CARD */
+  .booking-wrap { max-width:680px; margin:0 auto; padding:0 2rem 80px; }
+  .booking-card {
+    background:var(--surface);
+    border:1px solid var(--border2);
+    border-radius:16px; overflow:hidden;
+    box-shadow: 0 0 60px rgba(0,229,255,.06);
+  }
+  .booking-header {
+    padding:20px 24px;
+    border-bottom:1px solid var(--border);
+    display:flex; align-items:center; justify-content:space-between;
+    background:var(--surface2);
+  }
+  .booking-header h2 { font-family:'Rajdhani',sans-serif; font-size:1.1rem; font-weight:600; letter-spacing:1px; text-transform:uppercase; }
+  .steps-track { display:flex; align-items:center; gap:4px; }
+  .step-node {
+    width:28px; height:6px; border-radius:3px;
+    background:var(--border2); transition:all .3s;
+  }
+  .step-node.active { background:var(--accent); box-shadow:0 0 8px rgba(0,229,255,.5); }
+  .step-node.done { background:var(--charge); }
+
+  .booking-body { padding:24px; }
+  .form-step { display:none; }
+  .form-step.active { display:block; animation:fadeUp .25s ease; }
+
+  /* STEP LABEL */
+  .step-label { font-family:'JetBrains Mono',monospace; font-size:.7rem; color:var(--text-muted); letter-spacing:2px; text-transform:uppercase; margin-bottom:14px; }
+
+  /* SERVICE CARDS */
+  .svc-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:6px; }
+  .svc-card {
+    border:1px solid var(--border2); border-radius:10px;
+    padding:14px 16px; cursor:pointer;
+    transition:all .2s; background:var(--surface2);
+    position:relative; overflow:hidden;
+  }
+  .svc-card::before {
+    content:''; position:absolute; top:0; left:0; right:0; height:2px;
+    background:linear-gradient(90deg, var(--accent), var(--accent2));
+    opacity:0; transition:opacity .2s;
+  }
+  .svc-card:hover { border-color:var(--accent); transform:translateY(-2px); box-shadow:0 4px 20px rgba(0,229,255,.1); }
+  .svc-card:hover::before { opacity:1; }
+  .svc-card.selected { border-color:var(--accent); background:rgba(0,229,255,.06); }
+  .svc-card.selected::before { opacity:1; }
+  .svc-card.selected::after { content:'✓'; position:absolute; top:10px; right:12px; color:var(--accent); font-size:.75rem; font-weight:700; font-family:'JetBrains Mono',monospace; }
+  .svc-icon { font-size:1.5rem; margin-bottom:8px; }
+  .svc-name { font-family:'Rajdhani',sans-serif; font-size:1rem; font-weight:600; letter-spacing:.5px; margin-bottom:4px; }
+  .svc-price { font-family:'JetBrains Mono',monospace; font-size:.75rem; color:var(--accent); }
+  .svc-duration { font-size:.72rem; color:var(--text-muted); margin-top:2px; }
+
+  /* FORM FIELDS */
+  .fg { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:12px; }
+  .fg.full { grid-template-columns:1fr; }
+  .field label { display:block; font-size:.72rem; font-weight:600; color:var(--text-muted); margin-bottom:6px; text-transform:uppercase; letter-spacing:1px; }
+  .field input, .field select, .field textarea {
+    width:100%; background:var(--surface2);
+    border:1px solid var(--border2); border-radius:8px;
+    padding:10px 14px; color:var(--text);
+    font-family:'Outfit',sans-serif; font-size:.9rem;
+    outline:none; transition:border-color .2s, box-shadow .2s;
+  }
+  .field input:focus, .field select:focus, .field textarea:focus {
+    border-color:var(--accent);
+    box-shadow:0 0 0 3px rgba(0,229,255,.08);
+  }
+  .field textarea { resize:vertical; min-height:75px; }
+  .field select option { background:var(--surface2); }
+
+  /* CALENDAR */
+  .cal-nav { display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; }
+  .cal-nav .month-label { font-family:'Rajdhani',sans-serif; font-size:1rem; font-weight:600; letter-spacing:1px; }
+  .cal-arrow { width:28px; height:28px; border-radius:6px; border:1px solid var(--border2); background:var(--surface2); color:var(--text-muted); cursor:pointer; font-size:.8rem; transition:all .15s; }
+  .cal-arrow:hover { border-color:var(--accent); color:var(--accent); }
+  .date-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:5px; margin-bottom:18px; }
+  .dc {
+    aspect-ratio:1; display:flex; align-items:center; justify-content:center;
+    border-radius:7px; font-size:.78rem; cursor:pointer;
+    border:1px solid transparent; transition:all .15s;
+  }
+  .dc.hdr { color:var(--text-muted); font-size:.65rem; font-family:'JetBrains Mono',monospace; cursor:default; font-weight:500; }
+  .dc.day { background:var(--surface2); }
+  .dc.day:hover { border-color:var(--accent); color:var(--accent); box-shadow:0 0 8px rgba(0,229,255,.15); }
+  .dc.sel { background:var(--accent); color:#050810; border-color:var(--accent); font-weight:700; box-shadow:0 0 12px rgba(0,229,255,.4); }
+  .dc.tod { border-color:var(--charge); color:var(--charge); }
+  .dc.dis { opacity:.2; cursor:not-allowed; }
+
+  .time-section-label { font-family:'JetBrains Mono',monospace; font-size:.68rem; color:var(--text-muted); letter-spacing:2px; text-transform:uppercase; margin-bottom:8px; }
+  .time-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:7px; margin-bottom:4px; }
+  .ts {
+    padding:8px 4px; text-align:center; border-radius:7px;
+    border:1px solid var(--border2); font-size:.75rem;
+    cursor:pointer; transition:all .15s; background:var(--surface2);
+    font-family:'JetBrains Mono',monospace;
+  }
+  .ts:hover { border-color:var(--accent); color:var(--accent); box-shadow:0 0 8px rgba(0,229,255,.1); }
+  .ts.sel { background:var(--accent); color:#050810; border-color:var(--accent); font-weight:700; box-shadow:0 0 10px rgba(0,229,255,.35); }
+  .ts.busy { opacity:.25; cursor:not-allowed; text-decoration:line-through; }
+
+  /* SUMMARY */
+  .summary-box { background:var(--surface2); border:1px solid var(--border2); border-radius:10px; padding:16px; margin-bottom:18px; }
+  .sr { display:flex; justify-content:space-between; align-items:flex-start; padding:9px 0; border-bottom:1px solid var(--border); }
+  .sr:last-child { border-bottom:none; padding-bottom:0; }
+  .sr .lbl { font-size:.8rem; color:var(--text-muted); }
+  .sr .val { font-family:'JetBrains Mono',monospace; font-size:.8rem; text-align:right; }
+  .sr .val.hl { color:var(--accent); }
+  .sr .val.grn { color:var(--charge); }
+
+  /* BUTTONS */
+  .btn-row { display:flex; gap:10px; margin-top:22px; }
+  .btn { padding:11px 22px; border-radius:8px; font-family:'Outfit',sans-serif; font-size:.9rem; font-weight:600; cursor:pointer; transition:all .2s; border:none; }
+  .btn-primary {
+    flex:1; background:linear-gradient(135deg, var(--accent), #00b8cc);
+    color:#050810;
+  }
+  .btn-primary:hover { transform:translateY(-1px); box-shadow:0 4px 24px rgba(0,229,255,.35); }
+  .btn-primary:disabled { opacity:.35; cursor:not-allowed; transform:none; box-shadow:none; }
+  .btn-ghost { background:var(--surface2); color:var(--text-muted); border:1px solid var(--border2); }
+  .btn-ghost:hover { color:var(--text); border-color:var(--text-muted); }
+
+  /* SUCCESS */
+  .success-wrap { text-align:center; padding:40px 16px; }
+  .success-bolt { font-size:3.5rem; animation:zap .5s cubic-bezier(.34,1.56,.64,1); }
+  @keyframes zap { from{transform:scale(0) rotate(-20deg)} to{transform:scale(1) rotate(0)} }
+  .success-wrap h3 { font-family:'Rajdhani',sans-serif; font-size:1.6rem; font-weight:700; letter-spacing:2px; margin:12px 0 6px; }
+  .success-wrap p { color:var(--text-muted); font-size:.88rem; line-height:1.6; }
+  .ref-badge {
+    display:inline-block; margin:20px 0;
+    font-family:'JetBrains Mono',monospace; font-size:1rem; letter-spacing:3px;
+    color:var(--accent); background:rgba(0,229,255,.08);
+    border:1px solid rgba(0,229,255,.25); border-radius:8px;
+    padding:10px 24px;
+    box-shadow:0 0 20px rgba(0,229,255,.1);
+  }
+  .charge-bar { width:200px; height:6px; background:var(--border); border-radius:3px; margin:0 auto 6px; overflow:hidden; }
+  .charge-fill { height:100%; background:linear-gradient(90deg, var(--charge), var(--accent)); border-radius:3px; animation:charge 1.5s ease forwards; width:0; }
+  @keyframes charge { to{width:100%} }
+
+  /* ========== STAFF VIEW ========== */
+  .dashboard { padding:1.8rem 2rem; max-width:1200px; margin:0 auto; }
+
+  .dash-top { display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:24px; }
+  .dash-brand { font-family:'Rajdhani',sans-serif; font-size:1.7rem; font-weight:700; letter-spacing:2px; text-transform:uppercase; }
+  .dash-brand span { color:var(--accent); }
+  .live-pill {
+    display:inline-flex; align-items:center; gap:6px;
+    padding:3px 10px; border-radius:20px;
+    background:rgba(0,255,136,.08); border:1px solid rgba(0,255,136,.2);
+    font-family:'JetBrains Mono',monospace; font-size:.65rem; color:var(--charge); letter-spacing:1px;
+    margin-top:4px;
+  }
+  .live-dot { width:6px; height:6px; border-radius:50%; background:var(--charge); animation:pulse 1.5s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
+  .dash-date-area { text-align:right; }
+  .dash-date { font-family:'JetBrains Mono',monospace; font-size:.75rem; color:var(--text-muted); }
+  .new-btn {
+    margin-top:8px; padding:8px 16px; border-radius:8px;
+    background:linear-gradient(135deg, var(--accent), #00b8cc);
+    color:#050810; border:none; font-family:'Outfit',sans-serif;
+    font-size:.82rem; font-weight:700; cursor:pointer; transition:all .2s;
+  }
+  .new-btn:hover { box-shadow:0 0 16px rgba(0,229,255,.35); transform:translateY(-1px); }
+
+  /* STATS */
+  .kpi-row { display:grid; grid-template-columns:repeat(7,1fr); gap:14px; margin-bottom:14px; }
+  .rev-row  { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:24px; }
+  .kpi { text-align:center; }
+  .kpi {
+    background:var(--surface); border:1px solid var(--border2);
+    border-radius:12px; padding:18px 20px;
+    transition:border-color .2s, box-shadow .2s;
+    position:relative; overflow:hidden;
+  }
+  .kpi::after {
+    content:''; position:absolute; top:0; left:0; right:0; height:2px;
+    transition:opacity .2s; opacity:0;
+  }
+  .kpi.cyan::after { background:linear-gradient(90deg, var(--accent), transparent); }
+  .kpi.green::after { background:linear-gradient(90deg, var(--charge), transparent); }
+  .kpi.purple::after { background:linear-gradient(90deg, var(--accent2), transparent); }
+  .kpi.yellow::after { background:linear-gradient(90deg, var(--yellow), transparent); }
+  .kpi:hover { border-color:var(--border2); box-shadow:0 0 20px rgba(0,229,255,.06); }
+  .kpi:hover::after { opacity:1; }
+  .kpi-label { font-size:.7rem; text-transform:uppercase; letter-spacing:1.5px; color:var(--text-muted); margin-bottom:10px; font-family:'JetBrains Mono',monospace; }
+  .kpi-val { font-family:'Rajdhani',sans-serif; font-size:2.4rem; font-weight:700; line-height:1; }
+  .kpi-val.c { color:var(--accent); }
+  .kpi-val.g { color:var(--charge); }
+  .kpi-val.p { color:#a87fff; }
+  .kpi-val.y { color:var(--yellow); }
+  .kpi-val.o { color:#fb923c; }
+  .kpi.orange::after { background:linear-gradient(90deg, #fb923c, transparent); }
+  .kpi-sub { font-size:.72rem; color:var(--text-muted); margin-top:6px; }
+
+  /* MAIN GRID */
+  .main-grid { display:grid; grid-template-columns:1fr 320px; gap:18px; }
+  .panel { background:var(--surface); border:1px solid var(--border2); border-radius:12px; overflow:hidden; }
+  .panel-hdr {
+    padding:14px 20px; border-bottom:1px solid var(--border);
+    display:flex; align-items:center; justify-content:space-between;
+    background:var(--surface2);
+  }
+  .panel-title { font-family:'Rajdhani',sans-serif; font-size:.95rem; font-weight:600; letter-spacing:1px; text-transform:uppercase; }
+
+  /* FILTER CHIPS */
+  .chips { display:flex; gap:6px; }
+  .chip {
+    padding:3px 10px; border-radius:20px; font-size:.7rem; font-weight:600;
+    border:1px solid var(--border2); background:transparent;
+    color:var(--text-muted); cursor:pointer; transition:all .15s;
+    font-family:'JetBrains Mono',monospace; letter-spacing:.5px;
+  }
+  .chip:hover { color:var(--text); border-color:var(--text-muted); }
+  .chip.active { background:rgba(0,229,255,.1); color:var(--accent); border-color:rgba(0,229,255,.35); }
+
+  /* TABLE */
+  .apt-table { width:100%; border-collapse:collapse; }
+  .apt-table th {
+    text-align:left; padding:9px 18px;
+    font-family:'JetBrains Mono',monospace; font-size:.65rem; letter-spacing:1.5px;
+    text-transform:uppercase; color:var(--text-muted);
+    background:var(--surface2); border-bottom:1px solid var(--border);
+  }
+  .apt-table td { padding:13px 18px; border-bottom:1px solid var(--border); font-size:.85rem; vertical-align:middle; }
+  .apt-table tr:last-child td { border-bottom:none; }
+  .apt-table tr:hover td { background:rgba(0,229,255,.02); }
+  .ref-tag { font-family:'JetBrains Mono',monospace; font-size:.75rem; color:var(--accent); }
+
+  /* STATUS PILLS */
+  .pill { padding:3px 9px; border-radius:20px; font-size:.65rem; font-weight:700; text-transform:uppercase; letter-spacing:.8px; font-family:'JetBrains Mono',monospace; white-space:nowrap; }
+  .pill.pending { background:rgba(255,229,102,.1); color:var(--yellow); border:1px solid rgba(255,229,102,.25); }
+  .pill.confirmed { background:rgba(0,229,255,.1); color:var(--accent); border:1px solid rgba(0,229,255,.25); }
+  .pill.inprogress { background:rgba(123,47,255,.15); color:#a87fff; border:1px solid rgba(123,47,255,.3); }
+  .pill.done { background:rgba(0,255,136,.08); color:var(--charge); border:1px solid rgba(0,255,136,.2); }
+  .pill.cancelled { background:rgba(248,113,113,.08); color:#f87171; border:1px solid rgba(248,113,113,.25); }
+
+  .upd-btn {
+    padding:4px 10px; border-radius:6px; font-size:.72rem;
+    border:1px solid var(--border2); background:transparent; color:var(--text-muted);
+    cursor:pointer; transition:all .15s; font-family:'Outfit',sans-serif;
+  }
+  .upd-btn:hover { border-color:var(--accent); color:var(--accent); box-shadow:0 0 6px rgba(0,229,255,.15); }
+
+  /* SCHEDULE SIDEBAR */
+  .sched-list { padding:8px 0; }
+  .sched-item { display:flex; align-items:center; gap:12px; padding:11px 16px; border-bottom:1px solid var(--border); transition:background .15s; }
+  .sched-item:last-child { border-bottom:none; }
+  .sched-item:hover { background:rgba(0,229,255,.02); }
+  .sched-time { font-family:'JetBrains Mono',monospace; font-size:.7rem; color:var(--text-muted); width:42px; flex-shrink:0; }
+  .sched-info { flex:1; min-width:0; }
+  .sched-name { font-size:.82rem; font-weight:500; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .sched-svc { font-size:.72rem; color:var(--text-muted); margin-top:1px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .sched-ind { width:3px; height:32px; border-radius:2px; flex-shrink:0; }
+  .sched-ind.cyan { background:var(--accent); box-shadow:0 0 6px rgba(0,229,255,.4); }
+  .sched-ind.purple { background:var(--accent2); box-shadow:0 0 6px rgba(123,47,255,.4); }
+  .sched-ind.green { background:var(--charge); box-shadow:0 0 6px rgba(0,255,136,.4); }
+  .sched-ind.yellow { background:var(--yellow); }
+
+
+  /* WHATSAPP BUTTONS */
+  .wa-btn {
+    display:flex; align-items:center; justify-content:center; gap:10px;
+    padding:13px 20px; border-radius:10px; text-decoration:none;
+    font-family:'Outfit',sans-serif; font-size:.9rem; font-weight:600;
+    transition:all .2s; margin-bottom:10px; letter-spacing:.3px;
+  }
+  .wa-cust {
+    background:#25d366; color:#fff;
+    box-shadow: 0 4px 16px rgba(37,211,102,.3);
+  }
+  .wa-cust:hover { background:#1ebe5d; transform:translateY(-1px); box-shadow:0 6px 20px rgba(37,211,102,.4); }
+  .wa-staff {
+    background:var(--surface2); color:var(--accent);
+    border:1px solid rgba(0,229,255,.3);
+    box-shadow: 0 4px 16px rgba(0,229,255,.08);
+  }
+  .wa-staff:hover { background:rgba(0,229,255,.08); transform:translateY(-1px); }
+  .wa-note { font-size:.72rem; color:var(--text-muted); margin-top:4px; line-height:1.5; }
+  /* SCOOTER BRANDS */
+  .brand-row { display:flex; gap:6px; flex-wrap:wrap; margin-top:6px; }
+  .brand-chip {
+    padding:4px 10px; border-radius:6px; font-size:.72rem;
+    background:var(--surface2); border:1px solid var(--border2);
+    color:var(--text-muted); cursor:pointer; transition:all .15s;
+    font-family:'Outfit',sans-serif;
+  }
+  .brand-chip:hover { color:var(--accent); border-color:var(--accent); }
+  .brand-chip.sel { color:var(--accent); border-color:var(--accent); background:rgba(0,229,255,.06); }
+
+  /* BATTERY INDICATOR */
+  .battery-row { display:flex; gap:6px; align-items:center; margin-bottom:12px; }
+  .battery-label { font-size:.72rem; color:var(--text-muted); width:90px; flex-shrink:0; }
+  .battery-track { flex:1; height:8px; background:var(--border); border-radius:4px; overflow:hidden; }
+  .battery-fill { height:100%; border-radius:4px; background:linear-gradient(90deg, var(--charge), var(--accent)); }
+
+  @media(max-width:768px){
+
+    /* NAV */
+    nav { padding:0 1rem; height:52px; }
+    .logo { font-size:.95rem; letter-spacing:1px; }
+    .logo em { display:none; }
+    .nav-center { gap:1px; }
+    .nav-tab { padding:5px 10px; font-size:.78rem; }
+    .view-badge { display:none; }
+    .switch-btn { padding:5px 10px; font-size:.75rem; }
+
+    /* HERO */
+    .hero { padding:40px 1.2rem 36px; }
+    .hero h1 { font-size:clamp(2rem,10vw,3.2rem); letter-spacing:1px; }
+    .hero-sub { font-size:.85rem; margin:12px auto 28px; }
+    .hero-tag { font-size:.62rem; }
+
+    /* STATS BAR */
+    .stats-bar { flex-direction:column; max-width:100%; margin:0 1.2rem 36px; }
+    .stat-item { border-right:none; border-bottom:1px solid var(--border); padding:12px 16px; display:flex; align-items:center; justify-content:space-between; flex-direction:row; }
+    .stat-item:last-child { border-bottom:none; }
+    .stat-item .sv { font-size:1.4rem; }
+    .stat-item .sl { font-size:.68rem; }
+
+    /* BOOKING CARD */
+    .booking-wrap { padding:0 1rem 60px; max-width:100%; }
+    .booking-header { padding:14px 16px; }
+    .booking-body { padding:16px; }
+    .svc-grid { grid-template-columns:1fr 1fr; gap:8px; }
+    .svc-card { padding:14px 10px; }
+    .svc-icon { font-size:1.4rem; }
+    .svc-name { font-size:.78rem; }
+    .svc-price { font-size:.72rem; }
+    .fg { grid-template-columns:1fr; gap:10px; }
+    .field input, .field select, .field textarea { font-size:.9rem; padding:10px 12px; }
+    .time-grid { grid-template-columns:repeat(3,1fr); gap:8px; }
+    .ts { padding:10px 6px; font-size:.78rem; }
+    .step-label { font-size:.65rem; }
+    .btn-row { gap:8px; margin-top:20px; }
+    .btn { padding:11px 16px; font-size:.88rem; }
+    .summary-box { padding:14px; }
+    .sr { padding:7px 0; }
+    .success-wrap { padding:24px 16px; }
+    .success-bolt { font-size:2.8rem; }
+    .success-wrap h3 { font-size:1.3rem; }
+    .ref-badge { font-size:.85rem; padding:8px 18px; }
+    .charge-bar { width:160px; }
+
+    /* SPARE PARTS FORM */
+    #spareFormPage .booking-wrap { padding:0 1rem 60px; }
+
+    /* STAFF DASHBOARD */
+    .dashboard { padding:1rem; }
+    .dash-top { flex-direction:column; align-items:flex-start; gap:10px; margin-bottom:16px; }
+    .dash-brand { font-size:1.3rem; }
+    .dash-date-area { text-align:left; }
+    .new-btn { width:100%; text-align:center; padding:10px; }
+
+    /* KPI CARDS */
+    .kpi-row { grid-template-columns:1fr 1fr 1fr 1fr; gap:8px; margin-bottom:10px; }
+    .kpi { padding:12px 10px; border-radius:10px; }
+    .kpi-label { font-size:.55rem; letter-spacing:1px; margin-bottom:6px; }
+    .kpi-val { font-size:1.7rem; }
+    .kpi-sub { font-size:.62rem; margin-top:4px; }
+
+    /* REVENUE BAR */
+
+    /* MAIN GRID */
+    .main-grid { grid-template-columns:1fr; gap:12px; }
+    .panel { border-radius:10px; }
+    .panel-hdr { padding:10px 14px; flex-wrap:wrap; gap:8px; }
+    .panel-title { font-size:.85rem; }
+
+    /* CHIPS */
+    .chips { gap:4px; flex-wrap:wrap; }
+    .chip { padding:3px 8px; font-size:.62rem; }
+
+    /* TABLE — horizontal scroll */
+    .apt-table th { padding:7px 10px; font-size:.58rem; }
+    .apt-table td { padding:10px; font-size:.78rem; }
+    .ref-tag { font-size:.68rem; }
+    .upd-btn { padding:4px 8px; font-size:.68rem; }
+
+    /* SCHEDULE SIDEBAR */
+    .sched-item { padding:9px 12px; }
+    .sched-time { font-size:.65rem; }
+    .sched-name { font-size:.78rem; }
+    .sched-svc { font-size:.67rem; }
+
+    /* SEARCH BAR */
+    #staffSearchInput { font-size:.82rem; }
+
+    /* MODALS */
+    .modal-box { padding:20px 18px; border-radius:14px; margin:0 12px; }
+    .modal-title { font-size:1rem; }
+    .modal-field label { font-size:.65rem; }
+    .modal-field select, .modal-field textarea { font-size:.88rem; padding:9px 12px; }
+    .modal-btns { gap:8px; margin-top:16px; }
+    .pin-box { padding:28px 20px; margin:0 16px; }
+    .pin-grid { gap:6px; }
+    .pin-key { font-size:1.3rem; padding:12px 8px; }
+  }
+
+  @media(max-width:480px){
+    .hero h1 { font-size:clamp(1.7rem,9vw,2.5rem); }
+    .kpi-row { grid-template-columns:1fr 1fr; gap:8px; }
+    .svc-grid { grid-template-columns:1fr 1fr; }
+    .time-grid { grid-template-columns:repeat(2,1fr); }
+    nav .logo span:not(.logo-icon) { display:none; }
+    .chips { gap:3px; }
+    .chip { padding:2px 7px; font-size:.6rem; }
+  }
+
+  @media(max-width:768px){
+    .modal-overlay { align-items:flex-end; padding-bottom:0; }
+    .modal-box {
+      border-radius:20px 20px 0 0 !important;
+      margin:0 !important;
+      max-width:100% !important;
+      width:100% !important;
+      max-height:92vh;
+      padding:20px 18px 32px;
+    }
+    .modal-close { top:16px; right:16px; }
+  }
+  .modal-overlay {
+    position:fixed; inset:0; z-index:500;
+    background:rgba(0,0,0,.7); backdrop-filter:blur(6px);
+    display:flex; align-items:center; justify-content:center;
+    animation:fadeUp .2s ease;
+  }
+  .modal-box {
+    background:var(--surface); border:1px solid var(--border2);
+    border-radius:16px; padding:28px; width:100%; max-width:420px;
+    box-shadow:0 0 60px rgba(0,229,255,.1);
+    position:relative;
+    max-height:90vh; overflow-y:auto;
+  }
+  .modal-title {
+    font-family:'Rajdhani',sans-serif; font-size:1.1rem;
+    font-weight:700; letter-spacing:1px; margin-bottom:4px;
+  }
+  .modal-ref { font-family:'JetBrains Mono',monospace; font-size:.72rem; color:var(--accent); margin-bottom:20px; }
+  .modal-field { margin-bottom:16px; }
+  .modal-field label { display:block; font-size:.72rem; font-weight:600; color:var(--text-muted); text-transform:uppercase; letter-spacing:1px; margin-bottom:6px; }
+  .modal-field select, .modal-field textarea {
+    width:100%; background:var(--surface2); border:1px solid var(--border2);
+    border-radius:8px; padding:10px 14px; color:var(--text);
+    font-family:'Outfit',sans-serif; font-size:.9rem; outline:none;
+    transition:border-color .2s;
+  }
+  .modal-field select:focus, .modal-field textarea:focus { border-color:var(--accent); }
+  .modal-field textarea { resize:vertical; min-height:70px; }
+  .modal-field select option { background:var(--surface2); }
+  .modal-btns { display:flex; gap:10px; margin-top:20px; }
+  .modal-close {
+    position:absolute; top:14px; right:16px;
+    background:none; border:none; color:var(--text-muted);
+    font-size:1.1rem; cursor:pointer; transition:color .15s;
+  }
+  .modal-close:hover { color:var(--text); }
+  .wa-update-btn {
+    display:flex; align-items:center; justify-content:center; gap:8px;
+    width:100%; padding:11px; border-radius:8px; margin-top:10px;
+    background:#25d366; color:#fff; text-decoration:none;
+    font-family:'Outfit',sans-serif; font-size:.88rem; font-weight:600;
+    transition:all .2s; border:none; cursor:pointer;
+  }
+  .wa-update-btn:hover { background:#1ebe5d; transform:translateY(-1px); box-shadow:0 4px 16px rgba(37,211,102,.3); }
+  .wa-update-btn.hidden { display:none; }
+
+
+  /* PIN MODAL */
+  .pin-overlay {
+    position:fixed; inset:0; z-index:600;
+    background:rgba(0,0,0,.8); backdrop-filter:blur(8px);
+    display:flex; align-items:center; justify-content:center;
+    animation:fadeUp .2s ease;
+  }
+  .pin-box {
+    background:var(--surface); border:1px solid var(--border2);
+    border-radius:20px; padding:36px 32px; width:100%; max-width:360px;
+    text-align:center;
+    box-shadow:0 0 80px rgba(0,229,255,.12);
+  }
+  .pin-icon { font-size:2.2rem; margin-bottom:12px; }
+  .pin-title { font-family:'Rajdhani',sans-serif; font-size:1.3rem; font-weight:700; letter-spacing:2px; margin-bottom:4px; }
+  .pin-sub { font-size:.8rem; color:var(--text-muted); margin-bottom:24px; }
+  .pin-dots { display:flex; gap:12px; justify-content:center; margin-bottom:24px; }
+  .pin-dot {
+    width:16px; height:16px; border-radius:50%;
+    border:2px solid var(--border2); background:transparent;
+    transition:all .2s;
+  }
+  .pin-dot.filled { background:var(--accent); border-color:var(--accent); box-shadow:0 0 10px rgba(0,229,255,.5); }
+  .pin-dot.error { background:var(--red); border-color:var(--red); box-shadow:0 0 10px rgba(255,68,102,.5); }
+  .pin-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:16px; }
+  .pin-key {
+    padding:16px; border-radius:12px; font-size:1.2rem; font-weight:600;
+    background:var(--surface2); border:1px solid var(--border2); color:var(--text);
+    cursor:pointer; transition:all .15s; font-family:'Rajdhani',sans-serif;
+    letter-spacing:1px;
+  }
+  .pin-key:hover { background:var(--surface3); border-color:var(--accent); color:var(--accent); transform:scale(1.05); }
+  .pin-key:active { transform:scale(.96); }
+  .pin-key.del { color:var(--text-muted); font-size:1rem; }
+  .pin-error-msg { font-size:.78rem; color:var(--red); margin-top:8px; min-height:20px; font-family:'JetBrains Mono',monospace; letter-spacing:.5px; }
+  .pin-cancel { margin-top:12px; background:none; border:none; color:var(--text-muted); font-size:.82rem; cursor:pointer; font-family:'Outfit',sans-serif; transition:color .15s; }
+  .pin-cancel:hover { color:var(--text); }
+
+</style>
+<!-- Firebase -->
+</head>
+<body>
+
+<nav>
+  <div class="logo" onclick="goHome()" style="cursor:pointer;user-select:none;" title="Go to Home">
+    CHIRANJEEVA <em>AUTO TECH</em>
+  </div>
+  <div class="nav-center" id="navCenter"></div>
+  <div class="nav-right">
+    <button onclick="goHome()" title="Home" style="background:rgba(0,229,255,.07);border:1px solid rgba(0,229,255,.2);color:var(--accent);border-radius:8px;padding:5px 12px;font-size:.78rem;cursor:pointer;line-height:1;display:flex;align-items:center;gap:5px;font-family:inherit;font-weight:600;">🏠 Home</button>
+    <span class="view-badge" id="viewBadge">STAFF</span>
+    <button class="switch-btn" onclick="requestStaffAccess()">Staff Login</button>
+  </div>
+</nav>
+
+<!-- ========== CUSTOMER VIEW ========== -->
+<div id="custView" style="display:none">
+  <div class="page active">
+
+    <div class="hero">
+      <div class="hero-glow"></div>
+      <div class="hero-tag">Certified EV Specialists</div>
+      <h1>
+        CHIRANJEEVA<br>
+        <span class="line2">AUTO TECH</span>
+      </h1>
+      <p class="hero-sub">Expert care for your electric scooter. Battery diagnostics, motor service, firmware updates & more.</p>
+      <a href="tel:7494845484" style="display:inline-flex;align-items:center;gap:10px;margin-bottom:8px;padding:10px 22px;border-radius:30px;border:1px solid rgba(0,229,255,.3);background:rgba(0,229,255,.07);color:var(--accent);font-family:JetBrains Mono,monospace;font-size:.95rem;font-weight:500;letter-spacing:2px;text-decoration:none;">&#128222;&nbsp; 74948 45484</a>
+    </div>
+
+    <div class="stats-bar">
+      <div class="stat-item"><div class="sv">500+</div><div class="sl">Scooters Serviced</div></div>
+      <div class="stat-item"><div class="sv">48hr</div><div class="sl">Avg Turnaround</div></div>
+      <div class="stat-item"><div class="sv">4.9★</div><div class="sl">Customer Rating</div></div>
+    </div>
+
+    <div id="custMainSections">
+    <div class="booking-wrap" style="padding-bottom:16px;">
+      <!-- SPARE PARTS QUICK ACCESS -->
+      <div onclick="openSparePartsForm()" style="display:flex;align-items:center;justify-content:space-between;padding:16px 20px;background:var(--surface2);border:1px solid rgba(123,47,255,.3);border-radius:14px;cursor:pointer;margin-bottom:20px;transition:all .2s;position:relative;overflow:hidden;" onmouseover="this.style.borderColor='rgba(123,47,255,.6)';this.style.boxShadow='0 0 20px rgba(123,47,255,.12)'" onmouseout="this.style.borderColor='rgba(123,47,255,.3)';this.style.boxShadow='none'">
+        <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent2),transparent);"></div>
+        <div style="display:flex;align-items:center;gap:14px;">
+          <div style="width:44px;height:44px;border-radius:10px;background:rgba(123,47,255,.15);border:1px solid rgba(123,47,255,.3);display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0;">🔩</div>
+          <div>
+            <div style="font-family:'Rajdhani',sans-serif;font-weight:700;font-size:1rem;letter-spacing:1px;">SPARE PARTS REQUEST</div>
+            <div style="font-size:.75rem;color:var(--text-muted);margin-top:2px;">No appointment needed · Quick request</div>
+          </div>
+        </div>
+        <div style="color:var(--accent2);font-size:1.2rem;">→</div>
+      </div>
+    </div>
+    </div><!-- end custMainSections -->
+
+    <!-- SPARE PARTS FORM PAGE -->
+    <div id="spareFormPage" style="display:none;">
+      <div class="booking-wrap">
+        <div class="booking-card">
+          <div class="booking-header">
+            <h2>🔩 Spare Parts Request</h2>
+            <button onclick="closeSparePartsForm()" style="background:var(--surface);border:1px solid var(--border2);color:var(--text-muted);border-radius:6px;padding:5px 12px;font-size:.8rem;cursor:pointer;font-family:inherit;transition:all .2s;" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--text-muted)'">✕ Close</button>
+          </div>
+          <div class="booking-body">
+
+            <!-- FORM STATE -->
+            <div class="form-step active" id="spareInputState">
+              <div class="step-label">Fill in your details</div>
+              <div style="font-size:.78rem;color:var(--text-muted);margin-bottom:18px;padding:10px 14px;background:rgba(123,47,255,.06);border:1px solid rgba(123,47,255,.2);border-radius:8px;">🔩 No appointment needed — submit your request and our team will contact you shortly.</div>
+              <div class="fg">
+                <div class="field"><label>Your Name <span style="color:#f87171;">*</span></label><input id="spName" placeholder="Arjun Sharma" oninput="chkSpare()"/></div>
+                <div class="field"><label>Mobile Number <span style="color:#f87171;">*</span></label><input id="spPhone" type="tel" placeholder="98765 43210" oninput="chkSpare()"/></div>
+              </div>
+              <div class="fg full">
+                <div class="field"><label>Spare Parts Required <span style="color:#f87171;">*</span></label><textarea id="spParts" rows="3" placeholder="e.g. Brake pads for Okinawa S1 Pro, Motor belt, Throttle cable..." oninput="chkSpare()"></textarea></div>
+              </div>
+              <div class="fg full">
+                <div class="field">
+                  <label>Amount to Pay ₹ <span style="color:var(--text-muted);font-weight:400;text-transform:none;letter-spacing:0;">(optional)</span></label>
+                  <div style="position:relative;"><span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--text-muted);font-family:'JetBrains Mono',monospace;">₹</span><input id="spAmount" type="number" min="0" placeholder="0" style="padding-left:28px;"/></div>
+                </div>
+              </div>
+              <div id="spareError" style="display:none;margin-top:4px;padding:10px 14px;background:rgba(248,113,113,.07);border:1px solid rgba(248,113,113,.25);border-radius:8px;font-size:.78rem;color:#f87171;">⚠️ Please fill in Name, Phone and Spare Parts required.</div>
+              <div class="btn-row">
+                <button class="btn btn-ghost" onclick="closeSparePartsForm()">← Back</button>
+                <button class="btn btn-primary" id="spSubmitBtn" onclick="submitSpareRequest()">Submit Request →</button>
+              </div>
+            </div>
+
+            <!-- SUCCESS STATE — mirrors appointment success exactly -->
+            <div class="form-step" id="spareSuccessState">
+              <div class="success-wrap">
+                <div class="success-bolt">🔩</div>
+                <h3>REQUEST CONFIRMED</h3>
+                <p>Your spare parts request has been received.</p>
+                <div class="ref-badge" id="spareRefBadge"></div>
+                <div class="charge-bar"><div class="charge-fill"></div></div>
+                <p style="font-size:.88rem;color:var(--text);margin-bottom:6px;font-weight:500;">📲 Notify Service Centre</p>
+                <p style="font-size:.82rem;color:var(--text-muted);margin-bottom:20px;line-height:1.7;">Tap below to send your request via WhatsApp.<br>Just press <strong style="color:var(--charge);">Send</strong> to confirm with us. 🙏</p>
+                <div style="width:100%;max-width:340px;margin:0 auto;" id="spareWABtn"></div>
+                <div class="btn-row" style="justify-content:center;margin-top:20px;">
+                  <button class="btn btn-primary" style="flex:0 0 auto" onclick="resetSpareForm()">New Request</button>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="custBookingSection">
+      <div class="booking-wrap">
+      <div class="booking-card">
+        <div class="booking-header">
+          <h2>⚡ Book Service</h2>
+          <div class="steps-track">
+            <div class="step-node active" id="sn1"></div>
+            <div class="step-node" id="sn2"></div>
+            <div class="step-node" id="sn3"></div>
+            <div class="step-node" id="sn4"></div>
+          </div>
+        </div>
+        <div class="booking-body">
+
+          <!-- STEP 1: SERVICE TYPE -->
+          <div class="form-step active" id="step1">
+            <div class="step-label">01 — Select Service</div>
+            <div class="svc-grid">
+              <div class="svc-card" onclick="pickSvc(this,'General Service','₹450+','')">
+                <div class="svc-icon">🛵</div>
+                <div class="svc-name">General Service</div>
+                <div class="svc-price">₹450+</div>
+              </div>
+              <div class="svc-card" onclick="pickSvc(this,'Other Services','₹150+','')">
+                <div class="svc-icon">🔧</div>
+                <div class="svc-name">Other Services</div>
+                <div class="svc-price">₹150+</div>
+              </div>
+              <div class="svc-card" onclick="pickSvc(this,'Motor Servicing','₹650+','')">
+                <div class="svc-icon">⚡</div>
+                <div class="svc-name">Motor Servicing</div>
+                <div class="svc-price">₹650+</div>
+              </div>
+              <div class="svc-card" onclick="pickSvc(this,'Brake Replacement','₹350+','')">
+                <div class="svc-icon">🛑</div>
+                <div class="svc-name">Brake Replacement</div>
+                <div class="svc-price">₹350+</div>
+              </div>
+              <div class="svc-card" onclick="pickSvc(this,'Oben General Service','₹698+','')">
+                <div class="svc-icon">🔋</div>
+                <div class="svc-name">Oben General Service</div>
+                <div class="svc-price">₹698+</div>
+              </div>
+              <div class="svc-card" onclick="pickSvc(this,'Road Side Assistance','₹650+','')">
+                <div class="svc-icon">🚨</div>
+                <div class="svc-name">Road Side Assistance</div>
+                <div class="svc-price">₹650+</div>
+              </div>
+            </div>
+            <div style="display:flex;align-items:flex-start;gap:10px;margin-top:14px;padding:12px 14px;background:rgba(255,229,102,.06);border:1px solid rgba(255,229,102,.2);border-radius:8px;">
+              <span style="font-size:1rem;flex-shrink:0;">⚠️</span>
+              <p style="font-size:.78rem;color:#c8b86a;line-height:1.6;font-family:'Outfit',sans-serif;"><strong style="color:var(--yellow);">Note:</strong> Service time and prices are subject to change after final inspection by the service centre technician.</p>
+            </div>
+            <div class="btn-row"><button class="btn btn-primary" id="s1btn" onclick="goStep(2)" disabled>Continue →</button></div>
+          </div>
+
+          <!-- STEP 2: DATE & TIME -->
+          <div class="form-step" id="step2">
+            <div class="step-label">02 — Pick Date &amp; Time</div>
+            <div class="cal-nav">
+              <button class="cal-arrow" onclick="prevMo()">‹</button>
+              <span class="month-label" id="moLabel"></span>
+              <button class="cal-arrow" onclick="nextMo()">›</button>
+            </div>
+            <div class="date-grid" id="calGrid"></div>
+            <div class="time-section-label">Available Slots</div>
+            <div class="time-grid" id="timeGrid"></div>
+            <div class="btn-row">
+              <button class="btn btn-ghost" onclick="goStep(1)">← Back</button>
+              <button class="btn btn-primary" id="s2btn" onclick="goStep(3)" disabled>Continue →</button>
+            </div>
+          </div>
+
+          <!-- STEP 3: DETAILS -->
+          <div class="form-step" id="step3">
+            <div class="step-label">03 — Your Details</div>
+            <div class="fg">
+              <div class="field"><label>Your Name</label><input id="fName" placeholder="Arjun Sharma" oninput="chk3()"></div>
+              <div class="field"><label>Phone</label><input id="fPhone" type="tel" placeholder="+91 98765 43210" oninput="chk3()"></div>
+            </div>
+            <div class="fg">
+              <div class="field">
+                <label>Scooter Brand</label>
+                <select id="fBrand" onchange="chk3()">
+                  <option value="">Select brand</option>
+                  <option>Okinawa</option><option>Battre</option><option>Bounce Infinity</option>
+                  <option>Zelio</option><option>Oben</option><option>Others</option>
+                </select>
+              </div>
+              <div class="field"><label>Model</label><input id="fModel" placeholder="S1 Pro, 450X…" oninput="chk3()"></div>
+            </div>
+            <div class="fg">
+              <div class="field">
+                <label>Year</label>
+                <select id="fYear" onchange="chk3()">
+                  <option value="">Year</option>
+                </select>
+                <script>
+                  (function(){
+                    var sel = document.getElementById('fYear');
+                    var cy = new Date().getFullYear();
+                    for(var y=cy; y>=2018; y--){
+                      var o = document.createElement('option');
+                      o.value = y; o.text = y;
+                      sel.appendChild(o);
+                    }
+                    var old = document.createElement('option');
+                    old.value='Older'; old.text='Older';
+                    sel.appendChild(old);
+                  })();
+                </script>
+              </div>
+              <div class="field"><label>Registration No. <span style="color:var(--text-muted);font-weight:400;text-transform:none;letter-spacing:0">(optional)</span></label><input id="fReg" placeholder="AP 09 EV 0001"></div>
+            </div>
+            <div class="fg full">
+              <div class="field"><label>Odometer (km)</label><input id="fOdo" type="number" placeholder="e.g. 4200" oninput="chk3()"></div>
+            </div>
+            <div class="fg full">
+              <div class="field"><label>Issue Description (optional)</label><textarea id="fNotes" placeholder="Describe any problems — range loss, charging issues, unusual sounds…"></textarea></div>
+            </div>
+            <div class="btn-row">
+              <button class="btn btn-ghost" onclick="goStep(2)">← Back</button>
+              <button class="btn btn-primary" id="s3btn" onclick="goStep(4)" disabled>Review →</button>
+            </div>
+          </div>
+
+          <!-- STEP 4: SUMMARY -->
+          <div class="form-step" id="step4">
+            <div class="step-label">04 — Confirm Booking</div>
+            <div class="summary-box" id="summaryBox"></div>
+            <div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:4px;padding:11px 13px;background:rgba(255,229,102,.06);border:1px solid rgba(255,229,102,.2);border-radius:8px;">
+              <span style="font-size:.9rem;flex-shrink:0;">⚠️</span>
+              <p style="font-size:.75rem;color:#c8b86a;line-height:1.6;"><strong style="color:var(--yellow);">Note:</strong> Service time and prices are subject to change after final inspection by the service centre technician.</p>
+            </div>
+            <div class="btn-row">
+              <button class="btn btn-ghost" onclick="goStep(3)">← Edit</button>
+              <button class="btn btn-primary" onclick="confirmBook()">⚡ Confirm Booking</button>
+            </div>
+          </div>
+
+          <!-- SUCCESS -->
+          <div class="form-step" id="stepOK">
+            <div class="success-wrap">
+              <div class="success-bolt">⚡</div>
+              <h3>BOOKING CONFIRMED</h3>
+              <p>Your scooter service is scheduled.</p>
+              <div class="ref-badge" id="refBadge"></div>
+              <div class="charge-bar"><div class="charge-fill"></div></div>
+              <p style="font-size:.88rem;color:var(--text);margin-bottom:6px;font-weight:500;">📲 One last step!</p><p style="font-size:.82rem;color:var(--text-muted);margin-bottom:20px;line-height:1.7;">Please tap <strong style="color:var(--accent);">🔔 Notify Service Centre</strong> below.<br>WhatsApp will open — just press <strong style="color:var(--charge);">Send</strong> to confirm your booking with us. 🙏</p>
+              <div id="waButtons" style="width:100%;max-width:340px;margin:0 auto;"></div>
+              
+              <div class="btn-row" style="justify-content:center;margin-top:20px">
+                <button class="btn btn-primary" style="flex:0 0 auto" onclick="goHome()">✅ Done</button>
+              </div>
+              <div style="margin-top:28px;padding-top:20px;border-top:1px solid var(--border);text-align:center;">
+                <p style="font-size:.72rem;color:var(--text-muted);margin-bottom:10px;">Changed your mind?</p>
+                <button onclick="openCustomerCancelModal()" style="background:transparent;border:1px solid rgba(248,113,113,.3);color:#f87171;border-radius:8px;padding:8px 20px;font-size:.78rem;cursor:pointer;font-family:inherit;">❌ Cancel This Booking</button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+    </div><!-- end custBookingSection -->
+  </div>
+    <!-- WARRANTY NOTICE -->
+    <div style="margin:-20px auto 0;max-width:600px;padding:0 1rem;">
+      <div style="background:rgba(250,204,21,.04);border:1px solid rgba(250,204,21,.25);border-radius:14px;padding:18px 20px;">
+        <div style="font-family:'Rajdhani',sans-serif;font-size:.82rem;font-weight:700;letter-spacing:1px;color:#facc15;margin-bottom:10px;display:flex;align-items:center;gap:8px;">
+          ⚠️ WARRANTY SERVICE NOTICE
+        </div>
+        <p style="font-size:.78rem;color:var(--text-muted);line-height:1.8;margin:0 0 10px;">
+          Regular servicing is <strong style="color:var(--text);">mandatory</strong> to avail warranty benefits under company terms &amp; policies.
+        </p>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <div style="display:flex;align-items:flex-start;gap:10px;background:rgba(0,229,255,.04);border:1px solid rgba(0,229,255,.12);border-radius:8px;padding:10px 14px;">
+            <span style="font-size:1rem;flex-shrink:0;">🛵</span>
+            <div>
+              <div style="font-size:.78rem;font-weight:600;color:var(--text);margin-bottom:2px;">Electric Scooters</div>
+              <div style="font-size:.73rem;color:var(--text-muted);line-height:1.6;">Service every <strong style="color:var(--accent);">3 months</strong> or <strong style="color:var(--accent);">3,000 km</strong> — whichever comes first</div>
+            </div>
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:10px;background:rgba(123,47,255,.04);border:1px solid rgba(123,47,255,.15);border-radius:8px;padding:10px 14px;">
+            <span style="font-size:1rem;flex-shrink:0;">⚡</span>
+            <div>
+              <div style="font-size:.78rem;font-weight:600;color:var(--text);margin-bottom:2px;">Oben Electric Bike</div>
+              <div style="font-size:.73rem;color:var(--text-muted);line-height:1.6;">Service every <strong style="color:var(--accent2);">6 months</strong> or <strong style="color:var(--accent2);">5,000 km</strong> — whichever comes first</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+</div>
+
+<!-- ========== STAFF VIEW ========== -->
+<div id="staffView" style="display:none">
+  <div class="dashboard">
+    <div class="dash-top">
+      <div>
+        <div class="dash-brand">CHIRANJEEVA <span>AUTO TECH</span></div>
+        <div class="live-pill"><div class="live-dot"></div> LIVE DASHBOARD</div>
+      </div>
+      <div class="dash-date-area">
+        <div class="dash-date" id="dashDate"></div>
+        <button class="new-btn" onclick="openStaffAddBooking()">＋ Add Booking</button>
+      </div>
+    </div>
+
+    <div class="kpi-row">
+      <div class="kpi cyan">
+        <div class="kpi-label">Today's Jobs</div>
+        <div class="kpi-val c" id="kToday">0</div>
+        <div class="kpi-sub" id="kInProgress">0 in progress</div>
+      </div>
+      <div class="kpi yellow">
+        <div class="kpi-label">Awaiting Confirm</div>
+        <div class="kpi-val y" id="kPending">0</div>
+        <div class="kpi-sub">Needs action</div>
+      </div>
+      <div class="kpi orange">
+        <div class="kpi-label">In Progress</div>
+        <div class="kpi-val o" id="kInProgressCard">0</div>
+        <div class="kpi-sub">Being serviced</div>
+      </div>
+      <div class="kpi green">
+        <div class="kpi-label">Finished Today</div>
+        <div class="kpi-val g" id="kDone">0</div>
+        <div class="kpi-sub">On schedule</div>
+      </div>
+      <div class="kpi purple">
+        <div class="kpi-label">Finished This Week</div>
+        <div class="kpi-val p" id="kWeekly">0</div>
+        <div class="kpi-sub">This week</div>
+      </div>
+      <div class="kpi green">
+        <div class="kpi-label">Finished This Month</div>
+        <div class="kpi-val g" id="rMonthJobs">0</div>
+        <div class="kpi-sub" id="rMonthJobsSub">jobs completed</div>
+      </div>
+      <div class="kpi cyan">
+        <div class="kpi-label">Finished This Year</div>
+        <div class="kpi-val c" id="rYearJobs">0</div>
+        <div class="kpi-sub" id="rYearJobsSub">jobs completed</div>
+      </div>
+    </div>
+
+    </div>
+
+    <!-- REVENUE ROW -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:24px;">
+      <div class="kpi green">
+        <div class="kpi-label">Today's Revenue</div>
+        <div class="kpi-val g" id="rDay">₹0</div>
+        <div class="kpi-sub" id="rDaySub">0 payments</div>
+      </div>
+      <div class="kpi cyan">
+        <div class="kpi-label">This Week</div>
+        <div class="kpi-val c" id="rWeek">₹0</div>
+        <div class="kpi-sub" id="rWeekSub">0 payments</div>
+      </div>
+      <div class="kpi purple">
+        <div class="kpi-label">This Month</div>
+        <div class="kpi-val p" id="rMonth">₹0</div>
+        <div class="kpi-sub" id="rMonthSub">0 payments</div>
+      </div>
+      <div class="kpi yellow">
+        <div class="kpi-label">This Year</div>
+        <div class="kpi-val y" id="rYear">₹0</div>
+        <div class="kpi-sub" id="rYearSub">0 payments</div>
+      </div>
+    </div>
+    <div style="margin-bottom:16px;">
+      <div style="position:relative;max-width:520px;">
+        <span style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--text-muted);font-size:1rem;pointer-events:none;">🔍</span>
+        <input id="staffSearchInput" type="text" placeholder="Search by Ref ID, Name or Mobile No..." oninput="staffSearch(this.value)"
+          style="width:100%;background:var(--surface2);border:1px solid var(--border2);border-radius:10px;padding:11px 44px 11px 40px;color:var(--text);font-family:'Outfit',sans-serif;font-size:.88rem;outline:none;transition:border-color .2s;"
+          onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border2)'"/>
+        <button id="staffSearchClear" onclick="clearStaffSearch()" style="display:none;position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:.9rem;">✕</button>
+      </div>
+      <div id="staffSearchResults" style="display:none;margin-top:8px;background:var(--surface2);border:1px solid var(--border2);border-radius:12px;overflow:hidden;"></div>
+    </div>
+
+    <div class="main-grid">
+      <div class="panel">
+        <div class="panel-hdr">
+          <span class="panel-title">Appointments</span>
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+          <button onclick="showExportMenu()" style="background:rgba(0,229,255,.08);border:1px solid rgba(0,229,255,.3);color:var(--accent);border-radius:8px;padding:5px 12px;font-size:.72rem;cursor:pointer;font-family:inherit;font-weight:600;">📥 Export</button>
+          <div class="chips">
+            <button class="chip active" onclick="filt(this,'all')">All</button>
+            <button class="chip" onclick="filt(this,'pending')">Pending</button>
+            <button class="chip" onclick="filt(this,'confirmed')">Confirmed</button>
+            <button class="chip" onclick="filt(this,'inprogress')">In Progress</button>
+            <button class="chip" onclick="filt(this,'done')">Finished</button>
+            <button class="chip" onclick="filt(this,'cancelled')" style="color:#f87171;">Cancelled</button>
+          </div>
+          </div>
+        </div>
+        <div style="overflow-x:auto">
+          <table class="apt-table">
+            <thead>
+              <tr>
+                <th>Ref</th><th>Customer</th><th>Service</th><th>Scooter</th><th>Date & Time</th><th>Status</th><th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="tBody"></tbody>
+          </table>
+          <div id="aptPagination"></div>
+          <div id="emptyState" style="display:none;text-align:center;padding:40px 20px;">
+            <div style="font-size:2rem;margin-bottom:10px;">📋</div>
+            <p style="color:var(--text-muted);font-size:.85rem;">No appointments yet.<br>Bookings will appear here.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-hdr">
+          <span class="panel-title">Today's Schedule</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--text-muted)" id="schedDay"></span>
+        </div>
+        <div class="sched-list" id="schedList"></div>
+      </div>
+    </div>
+
+    <!-- SPARE PARTS REQUESTS -->
+    <div class="panel" style="margin-top:18px;">
+      <div class="panel-hdr" style="display:flex;align-items:center;justify-content:space-between;">
+        <span class="panel-title">🔩 Spare Parts Requests</span>
+        <span style="font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--text-muted);" id="spareCount">0 requests</span>
+      </div>
+      <div id="spareBody">
+        <div style="text-align:center;padding:32px;color:var(--text-muted);font-size:.82rem;">
+          <div style="font-size:1.8rem;margin-bottom:8px;">🔩</div>No spare parts requests yet.
+        </div>
+      </div>
+      <div id="sparePagination"></div>
+    </div>
+
+  </div>
+</div>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script>
+// ===== DATA =====
+let mode = 'customer';
+let bk = {};
+let selSvcCard = null, curStep = 1;
+let calY, calM;
+const now = new Date();
+calY = now.getFullYear(); calM = now.getMonth();
+
+let jobs = [];
+
+// 5 fixed daily slots: 10:30 → 12:00 → 13:30 → 15:00 → 17:00
+const allTimes = ['10:30','12:00','13:30','15:00','17:00'];
+const busyTimes = [];
+let bookedSlots = {}; // { 'dateString': ['10:30', '12:00', ...] }
+const statusCycle = ['pending','confirmed','inprogress','done'];
+const schedColors = { done:'green', inprogress:'cyan', confirmed:'purple', pending:'yellow' };
+
+// ===== VIEW TOGGLE =====
+const STAFF_PIN = '6060'; // Change this to your desired PIN
+let pinEntry = '';
+
+function requestStaffAccess() {
+  if (mode === 'staff') { mode = 'customer'; render(); return; }
+  pinEntry = '';
+  updatePinDots();
+  document.getElementById('pinError').textContent = '';
+  document.getElementById('pinModal').style.display = 'flex';
+}
+
+function closePinModal() {
+  document.getElementById('pinModal').style.display = 'none';
+  pinEntry = '';
+  updatePinDots();
+}
+
+function pinKey(val) {
+  if (val === 'clear') { pinEntry = ''; }
+  else if (val === 'del') { pinEntry = pinEntry.slice(0, -1); }
+  else if (pinEntry.length < 4) { pinEntry += val; }
+  updatePinDots();
+  document.getElementById('pinError').textContent = '';
+  if (pinEntry.length === 4) checkPin();
+}
+
+function updatePinDots() {
+  for (let i = 0; i < 4; i++) {
+    const dot = document.getElementById('pd' + i);
+    dot.className = 'pin-dot' + (i < pinEntry.length ? ' filled' : '');
+  }
+}
+
+function checkPin() {
+  if (pinEntry === STAFF_PIN) {
+    closePinModal();
+    mode = 'staff'; render();
+  } else {
+    // Shake dots red
+    for (let i = 0; i < 4; i++) {
+      const dot = document.getElementById('pd' + i);
+      dot.className = 'pin-dot error';
+    }
+    document.getElementById('pinError').textContent = '✕ Incorrect PIN. Try again.';
+    setTimeout(() => { pinEntry = ''; updatePinDots(); }, 1000);
+  }
+}
+
+function toggleView() { mode = mode === 'staff' ? 'customer' : 'staff'; render(); }
+function switchTo(v) { mode = v; render(); }
+function render() {
+  document.getElementById('staffView').style.display = mode === 'staff' ? 'block' : 'none';
+  document.getElementById('custView').style.display = mode === 'customer' ? 'block' : 'none';
+  const b = document.getElementById('viewBadge');
+  b.textContent = mode === 'staff' ? 'STAFF' : 'CUSTOMER';
+  b.className = 'view-badge ' + mode;
+  const swBtn = document.querySelector('.switch-btn');
+  if (swBtn) swBtn.textContent = mode === 'staff' ? 'Exit Staff' : 'Staff Login';
+  if (mode === 'staff') renderDash();
+}
+
+// ===== BOOKING =====
+function pickSvc(el, name, price, dur) {
+  if (selSvcCard) selSvcCard.classList.remove('selected');
+  el.classList.add('selected'); selSvcCard = el;
+  bk.svc = name; bk.price = price; bk.dur = dur;
+  document.getElementById('s1btn').disabled = false;
+}
+
+function goStep(n) {
+  document.getElementById('step' + curStep).classList.remove('active');
+  document.getElementById('step' + n).classList.add('active');
+  ['sn1','sn2','sn3','sn4'].forEach((id,i) => {
+    const el = document.getElementById(id);
+    el.className = 'step-node' + (i < n-1 ? ' done' : i === n-1 ? ' active' : '');
+  });
+  curStep = n;
+  if (n === 2) renderCal();
+  if (n === 4) renderSummary();
+}
+
+// Calendar
+function renderCal() {
+  const label = new Date(calY, calM, 1).toLocaleString('default', { month:'long', year:'numeric' });
+  document.getElementById('moLabel').textContent = label;
+  const grid = document.getElementById('calGrid');
+  grid.innerHTML = '';
+  ['Su','Mo','Tu','We','Th','Fr','Sa'].forEach(d => {
+    const c = document.createElement('div');
+    c.className = 'dc hdr';
+    c.textContent = d;
+    if (d === 'Su') c.style.cssText = 'color:var(--red);opacity:.5;';
+    grid.appendChild(c);
+  });
+  const first = new Date(calY, calM, 1).getDay();
+  const days = new Date(calY, calM+1, 0).getDate();
+  for (let i=0;i<first;i++) { const e=document.createElement('div'); e.className='dc dis'; grid.appendChild(e); }
+  for (let d=1;d<=days;d++) {
+    const c = document.createElement('div'); c.className='dc day'; c.textContent=d;
+    const dt = new Date(calY, calM, d);
+    const isSunday = dt.getDay() === 0;
+    const isPast = dt < new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+    // Check if today has any slots still available (last slot is 17:00)
+    const isToday = d===now.getDate() && calM===now.getMonth() && calY===now.getFullYear();
+    const lastSlotMins = 17 * 60; // 17:00
+    const nowMins = now.getHours() * 60 + now.getMinutes();
+    const todayFullyPast = isToday && nowMins >= lastSlotMins; // uses local time — safe for IST
+
+    if (isPast || isSunday || todayFullyPast) {
+      c.className='dc dis';
+      if (isSunday) { c.title='Sunday — Holiday'; c.style.cssText='opacity:.2;cursor:not-allowed;color:var(--red);text-decoration:line-through;'; }
+      if (todayFullyPast) { c.title='No more slots today'; c.style.opacity='.3'; }
+    } else {
+      if (isToday) c.classList.add('tod');
+      c.onclick = () => {
+        document.querySelectorAll('.dc.sel').forEach(e=>e.classList.remove('sel'));
+        c.classList.add('sel');
+        const dt = new Date(calY,calM,d);
+        bk.dateISO = dt.getFullYear() + '-' + String(dt.getMonth()+1).padStart(2,'0') + '-' + String(dt.getDate()).padStart(2,'0');
+        bk.date = dt.toLocaleDateString('en-IN',{weekday:'short',day:'numeric',month:'short',year:'numeric'});
+        renderTimes();
+      };
+    }
+    grid.appendChild(c);
+  }
+  // Show Sunday holiday note
+  let sunNote = document.getElementById('sunNote');
+  if (!sunNote) {
+    sunNote = document.createElement('p');
+    sunNote.id = 'sunNote';
+    sunNote.style.cssText = 'font-size:.72rem;color:var(--red);opacity:.7;margin-bottom:14px;font-family:JetBrains Mono,monospace;letter-spacing:.5px;';
+    sunNote.textContent = '🔴 Sundays are holidays — no appointments available.';
+    grid.parentNode.insertBefore(sunNote, grid.nextSibling);
+  }
+
+  // Auto-select best available date if none chosen yet
+  if (!bk.date) {
+    const clickable = Array.from(grid.querySelectorAll('.dc')).filter(c => typeof c.onclick === 'function');
+    if (clickable.length > 0) clickable[0].click();
+  }
+}
+function prevMo() { calM--; if(calM<0){calM=11;calY--;} renderCal(); }
+function nextMo() { calM++; if(calM>11){calM=0;calY++;} renderCal(); }
+
+function renderTimes() {
+  const grid = document.getElementById('timeGrid'); grid.innerHTML = '';
+  const timeSectionLabel = document.querySelector('.time-section-label');
+  if (timeSectionLabel) timeSectionLabel.style.display = '';
+  grid.style.display = '';
+  const taken = (bookedSlots[bk.date] || []);
+
+  // Check if selected date is today — use local date (not UTC, avoids IST timezone shift)
+  const todayISO = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0') + '-' + String(now.getDate()).padStart(2,'0');
+  const isToday = bk.dateISO === todayISO;
+  const nowMins = now.getHours() * 60 + now.getMinutes();
+
+  let availCount = 0;
+  allTimes.forEach(t => {
+    const el = document.createElement('div');
+    const isTaken = taken.includes(t);
+
+    // Check if slot is in the past for today
+    const [sh, sm] = t.split(':').map(Number);
+    const slotMins = sh * 60 + sm;
+    const isPast = isToday && slotMins <= nowMins;
+
+    if (isTaken || isPast) {
+      el.className = 'ts busy';
+      el.title = isPast ? 'Slot has passed' : 'Slot already booked';
+      el.style.opacity = isPast ? '0.35' : '';
+    } else {
+      el.className = 'ts';
+      availCount++;
+      el.onclick = () => {
+        document.querySelectorAll('.ts.sel').forEach(e=>e.classList.remove('sel'));
+        el.classList.add('sel'); bk.time = t;
+        document.getElementById('s2btn').disabled = false;
+      };
+    }
+    el.textContent = t;
+    grid.appendChild(el);
+  });
+
+  // Show fully booked warning
+  let warn = document.getElementById('fullWarn');
+  if (!warn) { warn = document.createElement('p'); warn.id='fullWarn'; warn.style.cssText='font-size:.75rem;color:var(--red);margin-top:8px;font-family:JetBrains Mono,monospace;letter-spacing:1px;'; grid.parentNode.insertBefore(warn, grid.nextSibling); }
+  warn.textContent = availCount === 0 ? '⚠ No available slots for this date — please choose another day.' : '';
+  document.getElementById('s2btn').disabled = true;
+  bk.time = '';
+}
+
+function chk3() {
+  const ok = v('fName')&&v('fPhone')&&v('fBrand')&&v('fModel')&&v('fYear');
+  document.getElementById('s3btn').disabled = !ok;
+}
+function v(id) { return document.getElementById(id).value.trim(); }
+
+function renderSummary() {
+  bk.name=v('fName'); bk.phone=v('fPhone'); bk.brand=v('fBrand');
+  bk.model=v('fModel'); bk.year=v('fYear');
+  bk.reg = document.getElementById('fReg') ? document.getElementById('fReg').value.trim() : '';
+  bk.odo = document.getElementById('fOdo') ? document.getElementById('fOdo').value : '';
+  bk.notes = document.getElementById('fNotes') ? document.getElementById('fNotes').value : '';
+  document.getElementById('summaryBox').innerHTML = `
+    <div class="sr"><span class="lbl">Service</span><span class="val hl">${bk.svc}</span></div>
+    <div class="sr"><span class="lbl">Estimated Cost</span><span class="val hl">${bk.price}</span></div>
+    <div class="sr"><span class="lbl">Date</span><span class="val">${bk.date}</span></div>
+    <div class="sr"><span class="lbl">Time Slot</span><span class="val">${bk.time}</span></div>
+    <div class="sr"><span class="lbl">Customer</span><span class="val">${bk.name}</span></div>
+    <div class="sr"><span class="lbl">Phone</span><span class="val">${bk.phone}</span></div>
+    <div class="sr"><span class="lbl">Scooter</span><span class="val">${bk.brand} ${bk.model} (${bk.year})</span></div>
+    ${bk.reg ? `<div class="sr"><span class="lbl">Registration</span><span class="val">${bk.reg}</span></div>` : ''}
+    ${bk.odo ? `<div class="sr"><span class="lbl">Odometer</span><span class="val">${bk.odo} km</span></div>` : ''}
+    ${bk.notes ? `<div class="sr"><span class="lbl">Notes</span><span class="val" style="font-family:inherit;font-size:.8rem;max-width:60%;text-align:right">${bk.notes}</span></div>` : ''}
+  `;
+}
+
+// =====================================================
+// BACKEND INTEGRATION POINT
+// When your backend is ready, replace the BACKEND_URL
+// below with your actual API endpoint.
+// Expected POST body: JSON with all booking fields.
+// The backend should send WhatsApp via Twilio/Wati/AiSensy.
+// =====================================================
+const STAFF_PHONE = '917494845484';
+const BACKEND_URL = null; // e.g. 'https://yourserver.com/api/bookings'
+
+async function sendToBackend(payload) {
+  if (!BACKEND_URL) return { success: false, reason: 'no_backend' };
+  try {
+    const res = await fetch(BACKEND_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    const data = await res.json();
+    return { success: true, data };
+  } catch (e) {
+    console.error('Backend error:', e);
+    return { success: false, reason: 'error', error: e };
+  }
+}
+
+function buildMessages(ref) {
+  const regLine = bk.reg ? `\n🔖 Reg No: ${bk.reg}` : '';
+  const odoLine = bk.odo ? `\n📍 Odometer: ${bk.odo} km` : '';
+  const notesLine = bk.notes ? `\n📝 Notes: ${bk.notes}` : '';
+  const custMsg = `✅ *Booking Confirmed!*\n\nDear ${bk.name}, your service appointment at *Chiranjeeva Auto Tech* is confirmed.\n\n🔖 Ref: *${ref}*\n🛵 Scooter: ${bk.brand} ${bk.model} (${bk.year})${regLine}\n🔧 Service: ${bk.svc}\n💰 Est. Price: ${bk.price}\n📅 Date: ${bk.date}\n⏰ Time: ${bk.time}\n\n⚠️ Final price may vary after technician inspection.\n\nPlease arrive on time. Thank you! 🙏`;
+  const staffMsg = `🔔 *New Booking Alert!*\n\n📋 Ref: *${ref}*\n👤 Customer: ${bk.name}\n📞 Phone: ${bk.phone}\n🛵 Scooter: ${bk.brand} ${bk.model} (${bk.year})${regLine}${odoLine}\n🔧 Service: ${bk.svc}\n💰 Price: ${bk.price}\n📅 Date: ${bk.date}\n⏰ Time: ${bk.time}${notesLine}`;
+  return { custMsg, staffMsg };
+}
+
+let confirmInProgress = false;
+async function confirmBook() {
+  if (confirmInProgress) return;
+  confirmInProgress = true;
+  const confirmBtn = document.querySelector('#step4 .btn-primary');
+  if (confirmBtn) { confirmBtn.disabled = true; confirmBtn.textContent = 'Saving…'; }
+  // Get accurate count from Firebase for correct sequential ref
+  let nextNum = jobs.length + 1;
+  try {
+    const snap = await getDB().collection('bookings').get();
+    nextNum = snap.size + 1;
+  } catch(e) {}
+  const ref = 'CAT-' + String(nextNum).padStart(4, '0');
+  document.getElementById('refBadge').textContent = ref;
+  lastConfirmedRef = ref;
+
+  jobs.push({ ref, name:bk.name, phone:bk.phone, svc:bk.svc, scooter:`${bk.brand} ${bk.model} ${bk.year}`, time:bk.time||'—', date:bk.date||'', odo:bk.odo||'', price:bk.price||'', status:'pending' });
+
+  const { custMsg, staffMsg } = buildMessages(ref);
+
+  // Build wa.me fallback links (used if no backend)
+  const custWALink = `https://wa.me/${bk.phone.replace(/[^0-9]/g,'')}?text=${encodeURIComponent(custMsg)}`;
+  const staffWALink = `https://wa.me/${STAFF_PHONE}?text=${encodeURIComponent(staffMsg)}`;
+
+  // Show success screen immediately
+  document.getElementById('step4').classList.remove('active');
+  document.getElementById('stepOK').classList.add('active');
+  curStep = 99;
+  confirmInProgress = false;
+
+  // Payload ready for backend
+  const payload = {
+    ref,
+    customerName: bk.name,
+    customerPhone: bk.phone,
+    brand: bk.brand,
+    model: bk.model,
+    year: bk.year,
+    reg: bk.reg || '',
+    odometer: bk.odo || '',
+    service: bk.svc,
+    price: bk.price,
+    date: bk.date,
+    time: bk.time,
+    notes: bk.notes || '',
+    staffPhone: STAFF_PHONE,
+    customerMessage: custMsg,
+    staffMessage: staffMsg,
+    timestamp: new Date().toISOString()
+  };
+
+  // Save to Firebase — with real-time slot conflict check
+  try {
+    // Re-check slot availability directly from Firebase right before saving
+    const slotCheck = await getDB().collection('bookings')
+      .where('date', '==', bk.date)
+      .where('time', '==', bk.time)
+      .where('status', '!=', 'cancelled')
+      .get();
+
+    if (!slotCheck.empty) {
+      // Slot was taken by someone else just now — rollback UI
+      document.getElementById('stepOK').classList.remove('active');
+      document.getElementById('step4').classList.add('active');
+      curStep = 4;
+      jobs.pop(); // remove optimistic push
+      if (confirmBtn) { confirmBtn.disabled = false; confirmBtn.textContent = '⚡ Confirm Booking'; }
+      alert('⚠️ Sorry! This slot was just booked by someone else.\n\nPlease go back and choose a different time slot.');
+      // Refresh slots so UI shows updated availability
+      const snap2 = await getDB().collection('bookings').get();
+      bookedSlots = {};
+      snap2.forEach(doc => {
+        const d = doc.data();
+        if (d.status !== 'cancelled' && d.date && d.time) {
+          if (!bookedSlots[d.date]) bookedSlots[d.date] = [];
+          if (!bookedSlots[d.date].includes(d.time)) bookedSlots[d.date].push(d.time);
+        }
+      });
+      renderTimes();
+      return;
+    }
+
+    await getDB().collection('bookings').add({
+      ref,
+      customerName: bk.name,
+      customerPhone: bk.phone,
+      brand: bk.brand,
+      model: bk.model,
+      year: bk.year,
+      reg: bk.reg || '',
+      odometer: bk.odo || '',
+      service: bk.svc,
+      price: bk.price,
+      date: bk.date,
+      time: bk.time,
+      notes: bk.notes || '',
+      status: 'pending',
+      timestamp: new Date().toISOString()
+    });
+  } catch(e) {
+    console.error('Firebase save error:', e);
+  }
+
+  // Show notify button
+  const waBox = document.getElementById('waButtons');
+  const notifyBtn = document.createElement('a');
+  notifyBtn.href = staffWALink;
+  notifyBtn.target = '_blank';
+  notifyBtn.className = 'wa-btn wa-staff';
+  notifyBtn.innerHTML = '<span>🔔</span> Notify Service Centre';
+  waBox.innerHTML = '';
+  waBox.appendChild(notifyBtn);
+}
+
+function goHome() {
+  if (mode === 'staff') { mode = 'customer'; render(); }
+  const spFP = document.getElementById('spareFormPage');
+  if (spFP) spFP.style.display = 'none';
+  resetBook();
+  document.getElementById('custBookingSection').style.display = 'block';
+  document.getElementById('custMainSections').style.display = 'block';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function resetBook() {
+  bk = {}; selSvcCard = null; curStep = 1;
+  document.querySelectorAll('.form-step').forEach(e=>e.classList.remove('active'));
+  document.getElementById('step1').classList.add('active');
+  document.querySelectorAll('.svc-card').forEach(c=>c.classList.remove('selected'));
+  document.querySelectorAll('.dc').forEach(c=>c.classList.remove('sel'));
+  document.querySelectorAll('.ts').forEach(c=>c.classList.remove('sel'));
+  ['s1btn','s2btn','s3btn'].forEach(id=>{ const el=document.getElementById(id); if(el) el.disabled=true; });
+  ['fName','fPhone','fModel','fReg','fNotes'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });
+  ['fBrand','fYear','fOdo'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });
+  ['sn1','sn2','sn3','sn4'].forEach((id,i)=>{ document.getElementById(id).className='step-node'+(i===0?' active':''); });
+  calY=now.getFullYear(); calM=now.getMonth();
+  confirmInProgress = false;
+  // Clear time grid so stale slots from previous booking are not shown
+  const timeGrid = document.getElementById('timeGrid');
+  if (timeGrid) timeGrid.innerHTML = '';
+  const fullWarn = document.getElementById('fullWarn');
+  if (fullWarn) fullWarn.textContent = '';
+  renderCal();
+}
+
+// ===== DASHBOARD =====
+function renderDash() {
+  currentFilter = 'all';
+  document.getElementById('dashDate').textContent = now.toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  document.getElementById('schedDay').textContent = now.toLocaleDateString('en-IN',{day:'numeric',month:'short'});
+  renderTable('all'); renderSched(); updateKPIs();
+}
+
+function filt(el, f) {
+  document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active'); renderTable(f, true);
+}
+
+let currentFilter = 'all';
+let modalRef = null;
+let aptPage = 1;
+const APT_PER_PAGE = 10;
+let sparePage = 1;
+const SPARE_PER_PAGE = 8;
+
+function renderTable(f, resetPage) {
+  currentFilter = f;
+  if (resetPage) aptPage = 1;
+  const list = f==='all' ? jobs : jobs.filter(j=>j.status===f);
+  const statusLabel = s => s==='inprogress'?'In Progress':s==='done'?'Finished':s.charAt(0).toUpperCase()+s.slice(1);
+  const empty = document.getElementById('emptyState');
+  const totalPages = Math.max(1, Math.ceil(list.length / APT_PER_PAGE));
+  aptPage = Math.min(aptPage, totalPages);
+  const start = (aptPage - 1) * APT_PER_PAGE;
+  const pageItems = list.slice(start, start + APT_PER_PAGE);
+
+  if (list.length === 0) {
+    document.getElementById('tBody').innerHTML = '';
+    if (empty) empty.style.display = 'block';
+  } else {
+    if (empty) empty.style.display = 'none';
+    document.getElementById('tBody').innerHTML = pageItems.map(j=>{
+      const cancelBtn = (j.status !== 'cancelled' && j.status !== 'done')
+        ? `<button class="upd-btn" onclick="staffCancelBooking('${j.ref}')" style="color:#f87171;border-color:rgba(248,113,113,.3);">❌ Cancel</button>`
+        : '';
+      return `<tr>
+        <td class="ref-tag" onclick="openBookingInfo('${j.ref}')" style="cursor:pointer">${j.ref}</td>
+        <td>${j.name}<br><span style="font-size:.72rem;color:var(--text-muted)">${j.phone||''}</span></td>
+        <td style="font-size:.82rem">${j.svc}</td>
+        <td style="font-size:.78rem;color:var(--text-muted)">${j.scooter}</td>
+        <td style="font-family:'JetBrains Mono',monospace;font-size:.75rem;line-height:1.6;">${j.date||'—'}<br><span style="color:var(--accent);">${j.time}</span></td>
+        <td><span class="pill ${j.status}">${statusLabel(j.status)}</span></td>
+        <td style="display:flex;gap:6px;align-items:center;">
+          <button class="upd-btn" onclick="openModal('${j.ref}')">Update</button>
+          ${cancelBtn}
+        </td>
+      </tr>`;
+    }).join('');
+  }
+
+  // Render pagination controls
+  const pg = document.getElementById('aptPagination');
+  if (pg) {
+    if (totalPages <= 1) { pg.innerHTML = ''; return; }
+    pg.innerHTML = `
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 18px;border-top:1px solid var(--border);">
+        <button onclick="aptGoPage(${aptPage-1})" ${aptPage===1?'disabled':''} style="background:${aptPage===1?'transparent':'rgba(0,229,255,.08)'};border:1px solid ${aptPage===1?'var(--border)':'rgba(0,229,255,.3)'};color:${aptPage===1?'var(--text-muted)':'var(--accent)'};border-radius:8px;padding:6px 14px;font-size:.78rem;cursor:${aptPage===1?'default':'pointer'};font-family:inherit;">← Prev</button>
+        <span style="font-size:.75rem;color:var(--text-muted);font-family:'JetBrains Mono',monospace;">Page ${aptPage} of ${totalPages} &nbsp;·&nbsp; ${list.length} total</span>
+        <button onclick="aptGoPage(${aptPage+1})" ${aptPage===totalPages?'disabled':''} style="background:${aptPage===totalPages?'transparent':'rgba(0,229,255,.08)'};border:1px solid ${aptPage===totalPages?'var(--border)':'rgba(0,229,255,.3)'};color:${aptPage===totalPages?'var(--text-muted)':'var(--accent)'};border-radius:8px;padding:6px 14px;font-size:.78rem;cursor:${aptPage===totalPages?'default':'pointer'};font-family:inherit;">Next →</button>
+      </div>`;
+  }
+}
+
+function aptGoPage(p) {
+  aptPage = p;
+  renderTable(currentFilter);
+}
+
+function openModal(ref) {
+  const j = jobs.find(x=>x.ref===ref);
+  if (!j) return;
+  modalRef = ref;
+  document.getElementById('modalRef').textContent = ref;
+  document.getElementById('modalCustomer').innerHTML = `<strong>${j.name}</strong> &nbsp;·&nbsp; ${j.svc} &nbsp;·&nbsp; ${j.scooter}`;
+  document.getElementById('modalStatus').value = j.status;
+  document.getElementById('modalNotes').value = '';
+  document.getElementById('waUpdateBtn').classList.add('hidden');
+  // Reset finished fields
+  document.getElementById('finishedFields').style.display = j.status === 'done' ? 'block' : 'none';
+  document.getElementById('finAmount').value = '';
+  document.getElementById('finParts').value = '';
+  document.getElementById('finPayment').value = '';
+  document.getElementById('finTech').value = '';
+  document.getElementById('finishedWarning').style.display = 'none';
+  selectedPayment = '';
+  ['Cash','Online','Both'].forEach(m => {
+    const btn = document.getElementById('payBtn'+m);
+    if (btn) { btn.style.background='transparent'; btn.style.borderColor='var(--border2)'; btn.style.color='var(--text-muted)'; }
+  });
+  document.getElementById('statusModal').style.display = 'flex';
+}
+
+function closeModal() {
+  document.getElementById('statusModal').style.display = 'none';
+  modalRef = null;
+}
+
+function onModalStatusChange() {
+  const j = jobs.find(x=>x.ref===modalRef);
+  const status = document.getElementById('modalStatus').value;
+  const notes = document.getElementById('modalNotes').value;
+
+  // Show/hide finished mandatory fields
+  const finFields = document.getElementById('finishedFields');
+  finFields.style.display = status === 'done' ? 'block' : 'none';
+  if (status !== 'done') {
+    document.getElementById('finishedWarning').style.display = 'none';
+  }
+
+  if (j && j.phone) updateWAButton(j, status, notes);
+}
+
+let selectedPayment = '';
+
+function selectPayment(method) {
+  selectedPayment = method;
+  document.getElementById('finPayment').value = method;
+  ['cash','online','both'].forEach(m => {
+    const btn = document.getElementById('payBtn' + m.charAt(0).toUpperCase() + m.slice(1));
+    if (m === method) {
+      btn.style.background = 'rgba(0,255,136,.12)';
+      btn.style.borderColor = 'rgba(0,255,136,.4)';
+      btn.style.color = 'var(--charge)';
+    } else {
+      btn.style.background = 'transparent';
+      btn.style.borderColor = 'var(--border2)';
+      btn.style.color = 'var(--text-muted)';
+    }
+  });
+  checkFinishedFields();
+}
+
+function checkFinishedFields() {
+  const amount = document.getElementById('finAmount').value.trim();
+  const payment = document.getElementById('finPayment').value;
+  const parts = document.getElementById('finParts').value.trim();
+  const tech = document.getElementById('finTech').value.trim();
+  const allFilled = amount && payment && parts && tech;
+  document.getElementById('finishedWarning').style.display = 'none';
+  // Also update WA button with new info
+  onModalStatusChange();
+  return allFilled;
+}
+
+function updateWAButton(j, status, notes) {
+  if (!j.phone) return;
+  const statusLabel = status==='inprogress'?'In Progress':status.charAt(0).toUpperCase()+status.slice(1);
+  const statusEmoji = {pending:'⏳',confirmed:'✅',inprogress:'🔧',done:'🎉'}[status]||'📋';
+  const statusLabel2 = status==='done'?'Finished':statusLabel;
+  const notesPart = notes ? `\n\n📝 ${notes}` : '';
+  const pickupNote = status==='done' ? '\n\n🛵 Your scooter is ready for pickup. Please visit us at your earliest convenience.' : '';
+  const msg = `${statusEmoji} *Service Update — Chiranjeeva Auto Tech*\n\nDear ${j.name},\n\nYour booking *${j.ref}* status has been updated to: *${statusLabel2||statusLabel}*\n\n💛 For final pricing details and any queries, we warmly welcome you to reach out to us — we're always happy to help!\n📞 Call us: *7494845484*${notesPart}${pickupNote}\n\nThank you for choosing us! 🙏`;
+  const waLink = `https://wa.me/${j.phone.replace(/[^0-9]/g,'')}?text=${encodeURIComponent(msg)}`;
+  const btn = document.getElementById('waUpdateBtn');
+  btn.href = waLink;
+  btn.classList.remove('hidden');
+}
+
+async function saveStatus() {
+  const j = jobs.find(x=>x.ref===modalRef);
+  if (!j) return;
+  const newStatus = document.getElementById('modalStatus').value;
+  const newNote = document.getElementById('modalNotes').value;
+
+  // Validate mandatory finished fields
+  if (newStatus === 'done') {
+    const amount = document.getElementById('finAmount').value.trim();
+    const payment = document.getElementById('finPayment').value;
+    const parts = document.getElementById('finParts').value.trim();
+    const tech = document.getElementById('finTech').value.trim();
+    if (!amount || !payment || !parts || !tech) {
+      document.getElementById('finishedWarning').style.display = 'block';
+      document.getElementById('finishedFields').scrollIntoView({ behavior:'smooth', block:'center' });
+      return;
+    }
+    j.finAmount = amount;
+    j.finPayment = payment;
+    j.finParts = parts;
+    j.finTech = tech;
+  }
+
+  j.status = newStatus;
+  j.lastNote = newNote;
+
+  // Set finishedAt locally immediately so revenue shows right away
+  if (newStatus === 'done') {
+    j.finishedAt = new Date().toISOString();
+  }
+
+  // Update UI immediately — don't wait for Firebase
+  closeModal();
+  updateKPIs(); renderTable(currentFilter); renderSched();
+
+  // Persist to Firebase in background
+  if (j.docId) {
+    try {
+      const updateData = { status: newStatus, lastNote: newNote };
+      if (newStatus === 'done') {
+        updateData.finAmount = j.finAmount;
+        updateData.finPayment = j.finPayment;
+        updateData.finParts = j.finParts;
+        updateData.finTech = j.finTech;
+        updateData.finishedAt = j.finishedAt;
+      }
+      await getDB().collection('bookings').doc(j.docId).update(updateData);
+    } catch(e) {
+      console.error('Firebase update error:', e);
+    }
+  }
+}
+
+// Close modal on overlay click
+document.addEventListener('click', e => {
+  const modal = document.getElementById('statusModal');
+  if (e.target === modal) closeModal();
+});
+
+function updateKPIs() {
+  // Helper: convert Firestore Timestamp OR ISO string to JS Date
+  const tsToDate = v => {
+    if (!v) return null;
+    if (typeof v === 'object' && v.toDate) return v.toDate(); // Firestore Timestamp
+    const d = new Date(v);
+    return isNaN(d) ? null : d;
+  };
+  const n2 = new Date();
+  const todayLocalStr = n2.getFullYear() + '-' + String(n2.getMonth()+1).padStart(2,'0') + '-' + String(n2.getDate()).padStart(2,'0');
+  const dow = n2.getDay() === 0 ? 6 : n2.getDay() - 1;
+  const wkStart = new Date(n2); wkStart.setDate(n2.getDate() - dow); wkStart.setHours(0,0,0,0);
+
+  // Exclude cancelled from all counts
+  const activeJobs = jobs.filter(j => j.status !== 'cancelled');
+
+  // Today's jobs (by timestamp, exclude cancelled)
+  const todayJobs = activeJobs.filter(j => {
+    const d = j.timestamp ? tsToDate(j.timestamp) : null;
+    if (!d || isNaN(d)) return false;
+    const dStr = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+    return dStr === todayLocalStr;
+  });
+
+  // Weekly jobs — only finished jobs (by finishedAt or timestamp)
+  const weeklyJobs = jobs.filter(j => {
+    if (j.status !== 'done') return false;
+    const d = j.finishedAt ? tsToDate(j.finishedAt) : (j.timestamp ? tsToDate(j.timestamp) : null);
+    if (!d || isNaN(d)) return false;
+    return d >= wkStart;
+  });
+
+  document.getElementById('kToday').textContent = todayJobs.length;
+  document.getElementById('kPending').textContent = jobs.filter(j=>j.status==='pending').length;
+  document.getElementById('kDone').textContent = jobs.filter(j=>j.status==='done').length;
+  const inp = jobs.filter(j=>j.status==='inprogress').length;
+  const subEl = document.getElementById('kInProgress');
+  if (subEl) subEl.textContent = inp + ' in progress';
+  const kip = document.getElementById('kInProgressCard');
+  if (kip) kip.textContent = inp;
+  const kw = document.getElementById('kWeekly');
+  if (kw) kw.textContent = weeklyJobs.length;
+
+  // Revenue calculations — only finished jobs with finAmount
+  const n = new Date();
+  const todayStr = n.getFullYear() + '-' + String(n.getMonth()+1).padStart(2,'0') + '-' + String(n.getDate()).padStart(2,'0');
+
+  // Start of this week (Monday)
+  const dayOfWeek = n.getDay() === 0 ? 6 : n.getDay() - 1;
+  const weekStart = new Date(n); weekStart.setDate(n.getDate() - dayOfWeek); weekStart.setHours(0,0,0,0);
+
+  // Start of this month
+  const monthStart = new Date(n.getFullYear(), n.getMonth(), 1);
+
+  const finished = jobs.filter(j => j.status === 'done' && j.finAmount);
+
+  let dayTotal = 0, dayCount = 0;
+  let weekTotal = 0, weekCount = 0;
+  let monthTotal = 0, monthCount = 0;
+  let yearTotal = 0, yearCount = 0;
+
+  // Start of this year
+  const yearStart = new Date(n.getFullYear(), 0, 1);
+
+  finished.forEach(j => {
+    const amt = parseFloat(j.finAmount) || 0;
+    // Use finishedAt for revenue date, fall back to timestamp
+    const d = j.finishedAt ? tsToDate(j.finishedAt) : (j.timestamp ? tsToDate(j.timestamp) : null);
+    if (!d || isNaN(d)) return;
+    const dStr = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+
+    // Today
+    if (dStr === todayStr) { dayTotal += amt; dayCount++; }
+
+    // This week
+    if (d >= weekStart) { weekTotal += amt; weekCount++; }
+
+    // This month
+    if (d >= monthStart) { monthTotal += amt; monthCount++; }
+
+    // This year
+    if (d >= yearStart) { yearTotal += amt; yearCount++; }
+  });
+
+  // Add spare parts fulfilled amounts to revenue
+  (typeof spareRequests !== 'undefined' ? spareRequests : [])
+    .filter(r => r.status === 'fulfilled' && parseFloat(r.amount) > 0)
+    .forEach(r => {
+      const amt = parseFloat(r.amount) || 0;
+      const d = r.date ? new Date(r.date) : null;
+      if (!d) return;
+      if (r.date === todayStr) { dayTotal += amt; dayCount++; }
+      if (d >= weekStart) { weekTotal += amt; weekCount++; }
+      if (d >= monthStart) { monthTotal += amt; monthCount++; }
+      if (d >= yearStart)  { yearTotal  += amt; yearCount++;  }
+    });
+
+  const fmt = v => v >= 1000 ? '₹' + (v/1000).toFixed(1) + 'k' : '₹' + v;
+
+  const rDay = document.getElementById('rDay');
+  const rWeek = document.getElementById('rWeek');
+  const rMonth = document.getElementById('rMonth');
+  if (rDay) { rDay.textContent = fmt(dayTotal); document.getElementById('rDaySub').textContent = dayCount + ' payment' + (dayCount !== 1 ? 's' : ''); }
+  if (rWeek) { rWeek.textContent = fmt(weekTotal); document.getElementById('rWeekSub').textContent = weekCount + ' payment' + (weekCount !== 1 ? 's' : ''); }
+  if (rMonth) { rMonth.textContent = fmt(monthTotal); document.getElementById('rMonthSub').textContent = monthCount + ' payment' + (monthCount !== 1 ? 's' : ''); }
+  const rYear = document.getElementById('rYear');
+  if (rYear) { rYear.textContent = fmt(yearTotal); document.getElementById('rYearSub').textContent = yearCount + ' payment' + (yearCount !== 1 ? 's' : ''); }
+
+  // Finished jobs this month (all done jobs, regardless of finAmount)
+  const finishedMonthCount = jobs.filter(j => {
+    if (j.status !== 'done') return false;
+    const d = j.finishedAt ? tsToDate(j.finishedAt) : (j.timestamp ? tsToDate(j.timestamp) : null);
+    if (!d || isNaN(d)) return false;
+    return d >= monthStart;
+  }).length;
+  const rMJ = document.getElementById('rMonthJobs');
+  if (rMJ) {
+    rMJ.textContent = finishedMonthCount;
+    document.getElementById('rMonthJobsSub').textContent = finishedMonthCount === 1 ? 'job completed' : 'jobs completed';
+  }
+
+  // Finished jobs this year
+  const finishedYearCount = jobs.filter(j => {
+    if (j.status !== 'done') return false;
+    const d = j.finishedAt ? tsToDate(j.finishedAt) : (j.timestamp ? tsToDate(j.timestamp) : null);
+    if (!d || isNaN(d)) return false;
+    return d >= yearStart;
+  }).length;
+  const rYJ = document.getElementById('rYearJobs');
+  if (rYJ) {
+    rYJ.textContent = finishedYearCount;
+    document.getElementById('rYearJobsSub').textContent = finishedYearCount === 1 ? 'job completed' : 'jobs completed';
+  }
+}
+
+function renderSched() {
+  const sorted = [...jobs].sort((a,b)=>a.time.localeCompare(b.time)).slice(0,9);
+  document.getElementById('schedList').innerHTML = sorted.map(j=>`
+    <div class="sched-item">
+      <div class="sched-time">${j.time}</div>
+      <div class="sched-info">
+        <div class="sched-name">${j.name}</div>
+        <div class="sched-svc">${j.svc}</div>
+      </div>
+      <div class="sched-ind ${schedColors[j.status]||'yellow'}"></div>
+    </div>
+  `).join('');
+}
+
+
+// ===== STAFF CANCEL BOOKING =====
+function staffCancelBooking(ref) {
+  const j = jobs.find(x => x.ref === ref);
+  if (!j) return;
+  // Show custom confirm modal
+  document.getElementById('cancelConfirmRef').textContent = ref;
+  document.getElementById('cancelConfirmName').textContent = j.name + ' · ' + j.svc + ' · ' + j.time;
+  document.getElementById('cancelConfirmModal').style.display = 'flex';
+  document.getElementById('cancelConfirmModal').dataset.ref = ref;
+}
+
+function doStaffCancel() {
+  const ref = document.getElementById('cancelConfirmModal').dataset.ref;
+  const j = jobs.find(x => x.ref === ref);
+  if (!j) return;
+  closeCancelConfirm();
+
+  // Free the slot locally
+  if (j.date && bookedSlots[j.date]) {
+    bookedSlots[j.date] = bookedSlots[j.date].filter(t => t !== j.time);
+  }
+  j.status = 'cancelled';
+
+  // Update Firebase so onSnapshot also reflects cancelled (won't re-add slot)
+  if (db && j.docId) {
+    getDB().collection('bookings').doc(j.docId).update({ status: 'cancelled' })
+      .catch(e => console.error('Firebase cancel error:', e));
+  }
+
+  updateKPIs(); renderTable(currentFilter || 'all'); renderSched();
+  showToast('✅ ' + ref + ' cancelled — ' + j.time + ' slot is now free');
+}
+
+function closeCancelConfirm() {
+  document.getElementById('cancelConfirmModal').style.display = 'none';
+}
+
+function showToast(msg) {
+  let toast = document.getElementById('toastMsg');
+  if (!toast) {
+    toast = document.createElement('div');
+    toast.id = 'toastMsg';
+    toast.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1a2038;border:1px solid rgba(248,113,113,.4);color:#f87171;padding:10px 20px;border-radius:10px;font-size:.82rem;z-index:9999;box-shadow:0 4px 20px rgba(0,0,0,.4);transition:opacity .3s;white-space:nowrap;';
+    document.body.appendChild(toast);
+  }
+  toast.textContent = msg;
+  toast.style.opacity = '1';
+  clearTimeout(window._toastTimer);
+  window._toastTimer = setTimeout(() => { toast.style.opacity = '0'; }, 3000);
+}
+
+// ===== STAFF SEARCH =====
+function staffSearch(query) {
+  const q = query.trim().toLowerCase();
+  const clearBtn = document.getElementById('staffSearchClear');
+  const resultsBox = document.getElementById('staffSearchResults');
+
+  clearBtn.style.display = q ? 'block' : 'none';
+  if (!q) { resultsBox.style.display = 'none'; return; }
+
+  // Search bookings
+  const jobMatches = jobs.filter(j =>
+    j.ref.toLowerCase().includes(q) ||
+    j.name.toLowerCase().includes(q) ||
+    (j.phone && j.phone.replace(/\s/g,'').includes(q.replace(/\s/g,'')))
+  );
+
+  // Search spare parts requests
+  const spareMatches = spareRequests.filter(r =>
+    r.ref.toLowerCase().includes(q) ||
+    r.name.toLowerCase().includes(q) ||
+    (r.phone && r.phone.replace(/\s/g,'').includes(q.replace(/\s/g,''))) ||
+    (r.parts && r.parts.toLowerCase().includes(q))
+  );
+
+  const total = jobMatches.length + spareMatches.length;
+
+  if (total === 0) {
+    resultsBox.style.display = 'block';
+    resultsBox.innerHTML = `<div style="padding:24px;text-align:center;color:var(--text-muted);font-size:.82rem;">😕 No results found for "<strong style="color:var(--text);">${query}</strong>"</div>`;
+    return;
+  }
+
+  const statusColors = { pending:'#facc15', confirmed:'#a78bfa', inprogress:'#00e5ff', done:'#00ff88', cancelled:'#f87171' };
+  const statusLbl = s => s==='inprogress'?'In Progress':s==='done'?'Finished':s.charAt(0).toUpperCase()+s.slice(1);
+  const spareColors = { pending:'#f59e0b', fulfilled:'#22c55e', cancelled:'#f87171' };
+
+  let html = `<div style="padding:8px 14px;font-size:.65rem;color:var(--text-muted);border-bottom:1px solid var(--border);font-family:'JetBrains Mono',monospace;letter-spacing:.5px;">${total} RESULT${total>1?'S':''} FOUND</div>`;
+
+  // Booking results
+  if (jobMatches.length > 0) {
+    html += `<div style="padding:6px 14px;font-size:.62rem;color:var(--accent);font-family:'JetBrains Mono',monospace;letter-spacing:1px;background:rgba(0,229,255,.04);border-bottom:1px solid var(--border);">⚡ APPOINTMENTS (${jobMatches.length})</div>`;
+    html += jobMatches.map(j => `
+      <div onclick="openSearchProfile('${j.ref}')" style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .15s;" onmouseover="this.style.background='rgba(0,229,255,.03)'" onmouseout="this.style.background='transparent'">
+        <div style="display:flex;align-items:center;gap:12px;">
+          <div style="width:36px;height:36px;border-radius:50%;background:rgba(0,229,255,.1);border:1px solid rgba(0,229,255,.2);display:flex;align-items:center;justify-content:center;font-size:.85rem;flex-shrink:0;">${j.name.charAt(0).toUpperCase()}</div>
+          <div>
+            <div style="font-weight:600;font-size:.85rem;">${j.name}</div>
+            <div style="font-size:.72rem;color:var(--text-muted);margin-top:1px;">📞 ${j.phone||'—'} &nbsp;·&nbsp; 🛵 ${j.scooter}</div>
+          </div>
+        </div>
+        <div style="text-align:right;flex-shrink:0;">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--accent);margin-bottom:4px;">${j.ref}</div>
+          <span style="padding:2px 8px;border-radius:20px;font-size:.62rem;font-weight:700;background:${statusColors[j.status]}18;color:${statusColors[j.status]};border:1px solid ${statusColors[j.status]}40;">${statusLbl(j.status)}</span>
+        </div>
+      </div>`).join('');
+  }
+
+  // Spare parts results
+  if (spareMatches.length > 0) {
+    html += `<div style="padding:6px 14px;font-size:.62rem;color:var(--accent2);font-family:'JetBrains Mono',monospace;letter-spacing:1px;background:rgba(123,47,255,.04);border-bottom:1px solid var(--border);">🔩 SPARE PARTS (${spareMatches.length})</div>`;
+    html += spareMatches.map(r => `
+      <div onclick="openSpareStaffModal('${r.docId}')" style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .15s;" onmouseover="this.style.background='rgba(123,47,255,.03)'" onmouseout="this.style.background='transparent'">
+        <div style="display:flex;align-items:center;gap:12px;">
+          <div style="width:36px;height:36px;border-radius:50%;background:rgba(123,47,255,.1);border:1px solid rgba(123,47,255,.2);display:flex;align-items:center;justify-content:center;font-size:.85rem;flex-shrink:0;">${r.name.charAt(0).toUpperCase()}</div>
+          <div>
+            <div style="font-weight:600;font-size:.85rem;">${r.name}</div>
+            <div style="font-size:.72rem;color:var(--text-muted);margin-top:1px;">📞 ${r.phone||'—'} &nbsp;·&nbsp; 🔩 ${r.parts.length>30?r.parts.substring(0,30)+'...':r.parts}</div>
+          </div>
+        </div>
+        <div style="text-align:right;flex-shrink:0;">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--accent2);margin-bottom:4px;">${r.ref}</div>
+          <span style="padding:2px 8px;border-radius:20px;font-size:.62rem;font-weight:700;background:${(spareColors[r.status]||'#888')}18;color:${spareColors[r.status]||'#888'};border:1px solid ${(spareColors[r.status]||'#888')}40;">${r.status}</span>
+        </div>
+      </div>`).join('');
+  }
+
+  resultsBox.style.display = 'block';
+  resultsBox.innerHTML = html;
+}
+
+function clearStaffSearch() {
+  document.getElementById('staffSearchInput').value = '';
+  document.getElementById('staffSearchResults').style.display = 'none';
+  document.getElementById('staffSearchClear').style.display = 'none';
+}
+
+// ===== CUSTOMER PROFILE + HISTORY MODAL =====
+function openSearchProfile(ref) {
+  const j = jobs.find(x => x.ref === ref);
+  if (!j) return;
+
+  // Find ALL bookings for this customer (by phone or name)
+  const history = jobs.filter(x =>
+    (j.phone && x.phone === j.phone) || x.name.toLowerCase() === j.name.toLowerCase()
+  ).sort((a,b) => (b.date||'').localeCompare(a.date||'') || b.ref.localeCompare(a.ref));
+
+  const statusColors = { pending:'#facc15', confirmed:'#a78bfa', inprogress:'#00e5ff', done:'#00ff88', cancelled:'#f87171' };
+  const statusLbl = s => s==='inprogress'?'In Progress':s==='done'?'Finished':s.charAt(0).toUpperCase()+s.slice(1);
+
+  document.getElementById('spContent').innerHTML = `
+    <!-- Customer Header -->
+    <div style="display:flex;align-items:center;gap:14px;padding:18px;background:var(--surface3);border-radius:12px;margin-bottom:14px;">
+      <div style="width:50px;height:50px;border-radius:50%;background:linear-gradient(135deg,rgba(0,229,255,.2),rgba(123,47,255,.2));border:1px solid rgba(0,229,255,.3);display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0;">
+        ${j.name.charAt(0).toUpperCase()}
+      </div>
+      <div style="flex:1;">
+        <div style="font-weight:700;font-size:1rem;">${j.name}</div>
+        <a href="tel:${j.phone}" style="display:inline-flex;align-items:center;gap:6px;margin-top:6px;padding:5px 12px;background:rgba(0,229,255,.1);border:1px solid rgba(0,229,255,.3);border-radius:8px;color:var(--accent);font-size:.75rem;text-decoration:none;font-weight:600;">
+          📞 Call ${j.phone}
+        </a>
+      </div>
+      <div style="text-align:right;">
+        <div style="font-size:.62rem;color:var(--text-muted);margin-bottom:4px;">TOTAL VISITS</div>
+        <div style="font-family:'Rajdhani',sans-serif;font-size:1.8rem;font-weight:700;color:var(--accent);">${history.length}</div>
+      </div>
+    </div>
+
+    <!-- Current Booking -->
+    <div style="margin-bottom:14px;">
+      <div style="font-size:.65rem;color:var(--text-muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;font-family:'JetBrains Mono',monospace;">Current Booking</div>
+      <div style="background:var(--surface3);border-radius:10px;padding:14px;border:1px solid ${statusColors[j.status]}30;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--accent);">${j.ref}</span>
+          <span style="padding:3px 10px;border-radius:20px;font-size:.65rem;font-weight:700;background:${statusColors[j.status]}18;color:${statusColors[j.status]};border:1px solid ${statusColors[j.status]}40;">${statusLbl(j.status)}</span>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+          <div><div style="font-size:.6rem;color:var(--text-muted);margin-bottom:2px;">SERVICE</div><div style="font-size:.82rem;font-weight:600;">🔧 ${j.svc}</div></div>
+          <div><div style="font-size:.6rem;color:var(--text-muted);margin-bottom:2px;">TIME</div><div style="font-family:'JetBrains Mono',monospace;font-size:.82rem;font-weight:600;color:var(--accent);">⏰ ${j.time}</div></div>
+          <div><div style="font-size:.6rem;color:var(--text-muted);margin-bottom:2px;">SCOOTER</div><div style="font-size:.78rem;">🛵 ${j.scooter}</div></div>
+          <div><div style="font-size:.6rem;color:var(--text-muted);margin-bottom:2px;">PRICE</div><div style="font-size:.82rem;font-weight:600;color:var(--charge);">${j.price||'—'}</div></div>
+        </div>
+        ${j.odo ? `<div style="margin-top:8px;padding:8px 10px;background:rgba(0,229,255,.05);border:1px solid rgba(0,229,255,.1);border-radius:8px;font-size:.75rem;color:var(--text-muted);">🔢 Odometer: <strong style="color:var(--text);">${j.odo} km</strong></div>` : ''}
+        ${j.date ? `<div style="margin-top:8px;font-size:.72rem;color:var(--text-muted);">📅 ${j.date}</div>` : ''}
+      </div>
+    </div>
+
+    <!-- Vehicle History -->
+    <div>
+      <div style="font-size:.65rem;color:var(--text-muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;font-family:'JetBrains Mono',monospace;">Appointment History (${history.length})</div>
+      ${history.map((h, idx) => `
+        <div style="display:flex;align-items:center;gap:12px;padding:10px 12px;background:var(--surface3);border-radius:8px;margin-bottom:6px;border-left:3px solid ${statusColors[h.status]||'#2a3560'};">
+          <div style="flex:1;">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px;">
+              <span style="font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--accent);">${h.ref}</span>
+              ${idx===0?'<span style="font-size:.58rem;padding:1px 6px;border-radius:10px;background:rgba(0,229,255,.1);color:var(--accent);border:1px solid rgba(0,229,255,.2);">LATEST</span>':''}
+            </div>
+            <div style="font-size:.78rem;font-weight:500;">🔧 ${h.svc}</div>
+            <div style="font-size:.68rem;color:var(--text-muted);margin-top:2px;">⏰ ${h.time}${h.date?' &nbsp;·&nbsp; 📅 '+h.date:''}</div>
+            ${h.odo ? `<div style="font-size:.65rem;color:var(--text-muted);margin-top:2px;">🔢 ${h.odo} km</div>` : ''}
+          </div>
+          <div style="text-align:right;flex-shrink:0;">
+            <div style="padding:2px 8px;border-radius:20px;font-size:.62rem;font-weight:700;background:${statusColors[h.status]}18;color:${statusColors[h.status]};border:1px solid ${statusColors[h.status]}40;">${statusLbl(h.status)}</div>
+            <div style="font-size:.7rem;color:var(--charge);margin-top:4px;">${h.price||''}</div>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+
+  document.getElementById('spUpdateBtn').onclick = () => { closeSearchProfile(); openModal(ref); };
+  document.getElementById('searchProfileModal').style.display = 'flex';
+}
+
+function closeSearchProfile() {
+  document.getElementById('searchProfileModal').style.display = 'none';
+}
+
+// ===== BOOKING INFO MODAL =====
+function openBookingInfo(ref) {
+  const j = jobs.find(x => x.ref === ref);
+  if (!j) return;
+
+  const statusColors = { pending:'#facc15', confirmed:'#a78bfa', inprogress:'#00e5ff', done:'#00ff88', cancelled:'#f87171' };
+  const statusLbl = s => s==='inprogress'?'In Progress':s==='done'?'Finished':s.charAt(0).toUpperCase()+s.slice(1);
+  const sColor = statusColors[j.status] || '#fff';
+
+  document.getElementById('biRef').textContent = ref;
+  document.getElementById('biContent').innerHTML = `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
+      <div style="background:var(--surface3);border-radius:10px;padding:14px;">
+        <div style="font-size:.62rem;color:var(--text-muted);letter-spacing:.5px;margin-bottom:5px;text-transform:uppercase;">Customer</div>
+        <div style="font-weight:600;font-size:.9rem;">${j.name}</div>
+        <a href="tel:${j.phone}" style="display:inline-flex;align-items:center;gap:6px;margin-top:8px;padding:6px 12px;background:rgba(0,229,255,.1);border:1px solid rgba(0,229,255,.3);border-radius:8px;color:var(--accent);font-size:.78rem;text-decoration:none;font-weight:600;">
+          📞 Call ${j.phone}
+        </a>
+      </div>
+      <div style="background:var(--surface3);border-radius:10px;padding:14px;">
+        <div style="font-size:.62rem;color:var(--text-muted);letter-spacing:.5px;margin-bottom:5px;text-transform:uppercase;">Status</div>
+        <div style="font-weight:700;font-size:.9rem;color:${sColor};">${statusLbl(j.status)}</div>
+        <div style="margin-top:8px;width:10px;height:10px;border-radius:50%;background:${sColor};box-shadow:0 0 8px ${sColor};"></div>
+      </div>
+    </div>
+
+    <div style="background:var(--surface3);border-radius:10px;padding:14px;margin-bottom:10px;">
+      <div style="font-size:.62rem;color:var(--text-muted);letter-spacing:.5px;margin-bottom:5px;text-transform:uppercase;">Appointment</div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:1.1rem;font-weight:700;color:var(--accent);">⏰ ${j.time || '—'}</div>
+      ${j.date ? `<div style="font-size:.78rem;color:var(--text-muted);margin-top:4px;">📅 ${j.date}</div>` : ''}
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
+      <div style="background:var(--surface3);border-radius:10px;padding:14px;">
+        <div style="font-size:.62rem;color:var(--text-muted);letter-spacing:.5px;margin-bottom:5px;text-transform:uppercase;">Service</div>
+        <div style="font-weight:600;font-size:.85rem;">🔧 ${j.svc}</div>
+      </div>
+      <div style="background:var(--surface3);border-radius:10px;padding:14px;">
+        <div style="font-size:.62rem;color:var(--text-muted);letter-spacing:.5px;margin-bottom:5px;text-transform:uppercase;">Quoted Price</div>
+        <div style="font-weight:700;font-size:.88rem;color:var(--charge);">${j.price || '—'}</div>
+      </div>
+    </div>
+
+    <div style="background:var(--surface3);border-radius:10px;padding:14px;margin-bottom:10px;">
+      <div style="font-size:.62rem;color:var(--text-muted);letter-spacing:.5px;margin-bottom:5px;text-transform:uppercase;">Scooter</div>
+      <div style="font-weight:600;font-size:.85rem;">🛵 ${j.scooter}${j.reg ? ` · <span style="color:var(--text-muted);">${j.reg}</span>` : ''}</div>
+      ${j.odo ? `<div style="font-size:.75rem;color:var(--text-muted);margin-top:4px;">Odometer: ${j.odo} km</div>` : ''}
+    </div>
+
+    ${j.notes ? `
+    <div style="background:var(--surface3);border-radius:10px;padding:14px;margin-bottom:10px;">
+      <div style="font-size:.62rem;color:var(--text-muted);letter-spacing:.5px;margin-bottom:5px;text-transform:uppercase;">Customer Notes</div>
+      <div style="font-size:.82rem;line-height:1.6;color:var(--text-muted);">${j.notes}</div>
+    </div>` : ''}
+
+    ${j.status === 'done' && j.finAmount ? `
+    <div style="background:rgba(0,255,136,.06);border:1px solid rgba(0,255,136,.25);border-radius:10px;padding:14px;margin-bottom:10px;">
+      <div style="font-size:.62rem;color:#00ff88;letter-spacing:.5px;margin-bottom:10px;text-transform:uppercase;">✅ Completion Summary</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
+        <div>
+          <div style="font-size:.6rem;color:var(--text-muted);margin-bottom:3px;text-transform:uppercase;">Final Amount</div>
+          <div style="font-weight:700;font-size:1rem;color:#00ff88;">₹${j.finAmount}</div>
+        </div>
+        <div>
+          <div style="font-size:.6rem;color:var(--text-muted);margin-bottom:3px;text-transform:uppercase;">Payment</div>
+          <div style="font-weight:600;font-size:.85rem;text-transform:capitalize;">${j.finPayment || '—'}</div>
+        </div>
+      </div>
+      ${j.finParts ? `<div style="font-size:.6rem;color:var(--text-muted);margin-bottom:3px;text-transform:uppercase;">Parts Changed</div>
+      <div style="font-size:.82rem;line-height:1.5;color:#e2e8f0;">${j.finParts}</div>` : ''}
+      ${j.finTech ? `<div style="font-size:.6rem;color:var(--text-muted);margin-top:8px;margin-bottom:3px;text-transform:uppercase;">Technician</div>
+      <div style="font-size:.85rem;font-weight:600;color:#a78bfa;">👨‍🔧 ${j.finTech}</div>` : ''}
+    </div>` : ''}
+
+    ${j.lastNote ? `
+    <div style="background:rgba(0,229,255,.05);border:1px solid rgba(0,229,255,.15);border-radius:10px;padding:14px;">
+      <div style="font-size:.62rem;color:var(--text-muted);letter-spacing:.5px;margin-bottom:5px;text-transform:uppercase;">Last Note</div>
+      <div style="font-size:.82rem;line-height:1.6;">${j.lastNote}</div>
+    </div>` : ''}
+  `;
+
+  document.getElementById('biUpdateBtn').onclick = () => {
+    closeBookingInfo();
+    openModal(ref);
+  };
+
+  document.getElementById('bookingInfoModal').style.display = 'flex';
+}
+
+function closeBookingInfo() {
+  document.getElementById('bookingInfoModal').style.display = 'none';
+}
+
+// ===== CUSTOMER CANCEL BOOKING =====
+let lastConfirmedRef = '';
+
+function openCustomerCancelModal() {
+  document.getElementById('custCancelRef').textContent = lastConfirmedRef || '—';
+  document.getElementById('custCancelModal').style.display = 'flex';
+}
+
+function closeCustomerCancelModal() {
+  document.getElementById('custCancelModal').style.display = 'none';
+}
+
+function doCustomerCancel() {
+  const ref = lastConfirmedRef;
+  const j = jobs.find(x => x.ref === ref);
+  closeCustomerCancelModal();
+
+  if (j) {
+    if (j.date && bookedSlots[j.date]) {
+      bookedSlots[j.date] = bookedSlots[j.date].filter(t => t !== j.time);
+    }
+    j.status = 'cancelled';
+    if (db && j.docId) {
+      getDB().collection('bookings').doc(j.docId).update({ status: 'cancelled' })
+        .catch(e => console.error('Firebase cancel error:', e));
+    }
+  }
+
+  // Replace entire stepOK content with cancellation screen
+  const successWrap = document.querySelector('#stepOK .success-wrap');
+  successWrap.innerHTML = `
+    <div style="text-align:center;padding:20px 0;">
+      <div style="font-size:3rem;margin-bottom:16px;">❌</div>
+      <div style="font-family:'Rajdhani',sans-serif;font-size:1.4rem;font-weight:700;color:#f87171;letter-spacing:2px;margin-bottom:8px;">BOOKING CANCELLED</div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--text-muted);margin-bottom:20px;">${ref}</div>
+      <div style="background:rgba(248,113,113,.07);border:1px solid rgba(248,113,113,.2);border-radius:12px;padding:16px;margin-bottom:24px;font-size:.82rem;color:var(--text-muted);line-height:1.8;">
+        Your appointment has been cancelled.<br>
+        The slot has been <strong style="color:#f87171;">released</strong> and is now available for others.<br>
+        You can make a new booking anytime. 🙏
+      </div>
+      <div style="font-size:.75rem;color:var(--text-muted);margin-bottom:6px;">Returning to home page in</div>
+      <div id="cancelCountdown" style="font-family:'JetBrains Mono',monospace;font-size:1.6rem;font-weight:700;color:#f87171;">3</div>
+    </div>
+  `;
+
+  // Countdown and redirect
+  let count = 3;
+  const timer = setInterval(() => {
+    count--;
+    const el = document.getElementById('cancelCountdown');
+    if (el) el.textContent = count;
+    if (count <= 0) {
+      clearInterval(timer);
+      resetBook();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }, 1000);
+}
+
+// ===== INIT =====
+render();
+window._dashReady = true;
+
+// ===== FIREBASE INIT =====
+const firebaseConfig = {
+  apiKey: "AIzaSyA44fHZx1fgIFZmn8B6TBLMX-nER15zDKs",
+  authDomain: "cjat-service-app.firebaseapp.com",
+  projectId: "cjat-service-app",
+  storageBucket: "cjat-service-app.firebasestorage.app",
+  messagingSenderId: "25046112590",
+  appId: "1:25046112590:web:7d57177ddc8d84f3c5a61f"
+};
+firebase.initializeApp(firebaseConfig);
+var db = firebase.firestore();
+function getDB() { if (!db) db = firebase.firestore(); return db; }
+
+// Real-time listener — loads all bookings and keeps dashboard in sync
+db.collection('bookings').onSnapshot(snapshot => {
+  jobs = [];
+  bookedSlots = {};
+  snapshot.forEach(docSnap => {
+    const d = docSnap.data();
+    jobs.push({
+      ref: d.ref || docSnap.id,
+      name: d.customerName || d.name || '—',
+      phone: d.customerPhone || d.phone || '',
+      svc: d.service || d.svc || '—',
+      scooter: ((d.brand||d.scooterBrand||'') + ' ' + (d.model||d.scooterModel||'') + ' ' + (d.year||d.scooterYear||'')).trim() || '—',
+      reg: d.reg || d.registration || '',
+      time: d.time || '—',
+      date: d.date || '',
+      odo: d.odometer || d.odo || '',
+      price: d.price || '',
+      notes: d.notes || '',
+      status: d.status || 'pending',
+      lastNote: d.lastNote || '',
+      finAmount: d.finAmount || '',
+      finPayment: d.finPayment || '',
+      finParts: d.finParts || '',
+      finTech: d.finTech || '',
+      finishedAt: d.finishedAt || '',
+      addedByStaff: d.addedByStaff || false,
+      timestamp: d.timestamp || d.createdAt || d.bookingDate || '',
+      docId: docSnap.id
+    });
+    // Only block slot if booking is NOT cancelled
+    if (d.date && d.status !== 'cancelled') {
+      if (!bookedSlots[d.date]) bookedSlots[d.date] = [];
+      if (!bookedSlots[d.date].includes(d.time)) bookedSlots[d.date].push(d.time);
+    }
+  });
+  // Sort locally by timestamp desc — handles Firestore Timestamps and ISO strings
+  jobs.sort((a,b) => {
+    const toMs = v => {
+      if (!v) return 0;
+      if (typeof v === 'object' && v.toDate) return v.toDate().getTime(); // Firestore Timestamp
+      return new Date(v).getTime();
+    };
+    return toMs(b.timestamp) - toMs(a.timestamp);
+  });
+  console.log('📋 Loaded', jobs.length, 'bookings from Firebase');
+  // Update dashboard UI
+  updateKPIs();
+  renderTable(currentFilter || 'all');
+  renderSched();
+  // If customer is on the time slot step, refresh with latest data
+  const step2 = document.getElementById('step2');
+  const custView = document.getElementById('custView');
+  if (step2 && step2.classList.contains('active') && bk.date &&
+      custView && custView.style.display !== 'none') {
+    renderTimes();
+  }
+}, err => console.error('Firebase listener error:', err));
+
+// ===== SPARE PARTS =====
+let spareRequests = [];
+let currentSpareId = null;
+
+function openSparePartsForm() {
+  document.getElementById('custMainSections').style.display = 'none';
+  document.getElementById('custBookingSection').style.display = 'none';
+  document.getElementById('spareFormPage').style.display = 'block';
+  document.getElementById('spareInputState').classList.add('active');
+  document.getElementById('spareSuccessState').classList.remove('active');
+  document.getElementById('spName').value = '';
+  document.getElementById('spPhone').value = '';
+  document.getElementById('spParts').value = '';
+  document.getElementById('spAmount').value = '';
+  document.getElementById('spareError').style.display = 'none';
+  const btn = document.getElementById('spSubmitBtn');
+  if (btn) { btn.disabled = false; btn.textContent = 'Submit Request →'; }
+  window.scrollTo({top: 0, behavior: 'smooth'});
+}
+
+function closeSparePartsForm() {
+  document.getElementById('spareFormPage').style.display = 'none';
+  document.getElementById('custMainSections').style.display = 'block';
+  document.getElementById('custBookingSection').style.display = 'block';
+  window.scrollTo({top: 0, behavior: 'smooth'});
+}
+
+function resetSpareForm() {
+  document.getElementById('spareInputState').classList.add('active');
+  document.getElementById('spareSuccessState').classList.remove('active');
+  document.getElementById('spName').value = '';
+  document.getElementById('spPhone').value = '';
+  document.getElementById('spParts').value = '';
+  document.getElementById('spAmount').value = '';
+  document.getElementById('spareError').style.display = 'none';
+  const btn = document.getElementById('spSubmitBtn');
+  if (btn) { btn.disabled = false; btn.textContent = 'Submit Request →'; }
+}
+
+function chkSpare() {
+  document.getElementById('spareError').style.display = 'none';
+}
+
+async function submitSpareRequest() {
+  const name  = document.getElementById('spName').value.trim();
+  const phone = document.getElementById('spPhone').value.trim();
+  const parts = document.getElementById('spParts').value.trim();
+  const amount = document.getElementById('spAmount').value.trim();
+
+  if (!name || !phone || !parts) {
+    document.getElementById('spareError').style.display = 'block';
+    return;
+  }
+
+  const now2 = new Date();
+  let spNextNum = spareRequests.length + 1;
+  while(spareRequests.find(r => r.ref === 'SP-' + String(spNextNum).padStart(4,'0'))) spNextNum++;
+  const ref = 'SP-' + String(spNextNum).padStart(4,'0');
+  const dateStr = now2.toISOString().split('T')[0];
+  const timeStr = now2.toLocaleTimeString('en-IN', {hour:'2-digit', minute:'2-digit'});
+
+  const submitBtn = document.getElementById('spSubmitBtn');
+  if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Submitting...'; }
+
+  try {
+    await getDB().collection('spareRequests').add({
+      ref, name, phone, parts, amount: amount || '0',
+      status: 'pending', date: dateStr, time: timeStr,
+      createdAt: new Date().toISOString()
+    });
+    document.getElementById('spareInputState').classList.remove('active');
+    document.getElementById('spareSuccessState').classList.add('active');
+    document.getElementById('spareRefBadge').textContent = ref;
+    const waMsg = `🔩 *Spare Parts Request — Chiranjeeva Auto Tech*\n\nName: ${name}\nPhone: ${phone}\nRef: ${ref}\n\nParts Needed:\n${parts}${amount ? '\n\nAmount: ₹' + amount : ''}\n\nPlease confirm availability. 🙏`;
+    document.getElementById('spareWABtn').innerHTML = `<a href="https://wa.me/917494845484?text=${encodeURIComponent(waMsg)}" target="_blank" style="display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:13px 20px;background:#25d366;color:#fff;border-radius:10px;font-weight:600;font-size:.92rem;text-decoration:none;font-family:'Outfit',sans-serif;">🔔 Notify Service Centre</a>`;
+    window.scrollTo({top: 0, behavior: 'smooth'});
+  } catch(e) {
+    console.error('Spare parts submit error:', e);
+    if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = 'Submit Request →'; }
+    alert('Failed to submit. Please check your connection and try again.');
+  }
+}
+
+db.collection('spareRequests').onSnapshot(snap => {
+  spareRequests = [];
+  snap.forEach(docSnap => {
+    const d = docSnap.data();
+    spareRequests.push({ ...d, docId: docSnap.id });
+  });
+  spareRequests.sort((a,b) => (b.date+b.time).localeCompare(a.date+a.time));
+  renderSpare();
+  updateKPIs();
+}, err => console.error('Spare parts listener error:', err));
+
+function renderSpare() {
+  const body = document.getElementById('spareBody');
+  const countEl = document.getElementById('spareCount');
+  if (!body) return;
+  if (!spareRequests.length) {
+    countEl.textContent = '0 requests';
+    body.innerHTML = `<div style="text-align:center;padding:32px;color:var(--text-muted);font-size:.82rem;"><div style="font-size:1.8rem;margin-bottom:8px;">🔩</div>No spare parts requests yet.</div>`;
+    const sp = document.getElementById('sparePagination'); if(sp) sp.innerHTML='';
+    return;
+  }
+  const totalPages = Math.max(1, Math.ceil(spareRequests.length / SPARE_PER_PAGE));
+  sparePage = Math.min(sparePage, totalPages);
+  const start = (sparePage - 1) * SPARE_PER_PAGE;
+  const pageItems = spareRequests.slice(start, start + SPARE_PER_PAGE);
+  countEl.textContent = spareRequests.length + ' request' + (spareRequests.length !== 1 ? 's' : '');
+  const statusPill = s => {
+    const map = { pending:'#f59e0b', fulfilled:'#22c55e', cancelled:'#f87171' };
+    const col = map[s] || '#888';
+    return `<span style="font-size:.68rem;padding:2px 10px;border-radius:20px;border:1px solid ${col}40;color:${col};background:${col}15;font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:.5px;">${s}</span>`;
+  };
+  body.innerHTML = `<div style="overflow-x:auto;"><table class="apt-table"><thead><tr><th>Ref</th><th>Customer</th><th>Parts Needed</th><th>Date</th><th>Amount</th><th>Status</th><th>Action</th></tr></thead><tbody>${pageItems.map(r=>`<tr><td><span onclick="openSpareInfo('${r.docId}')" style="font-family:'JetBrains Mono',monospace;font-size:.75rem;color:var(--accent2);cursor:pointer;text-decoration:underline dotted;">${r.ref}</span></td><td><div style="font-weight:600;font-size:.85rem;">${r.name}</div><div style="font-size:.72rem;color:var(--text-muted);">📞 ${r.phone}</div></td><td style="font-size:.8rem;max-width:200px;color:var(--text-muted);">${r.parts}</td><td style="font-size:.75rem;color:var(--text-muted);">${r.date}<br>${r.time}</td><td style="font-family:'Rajdhani',sans-serif;font-weight:700;color:var(--charge);">${r.amount&&r.amount!=='0'?'₹'+r.amount:'—'}</td><td>${statusPill(r.status)}</td><td><button onclick="openSpareStaffModal('${r.docId}')" style="background:rgba(123,47,255,.12);border:1px solid rgba(123,47,255,.3);color:var(--accent2);border-radius:6px;padding:5px 12px;font-size:.75rem;cursor:pointer;font-family:inherit;">✏️ Update</button></td></tr>`).join('')}</tbody></table></div>`;
+
+  // Spare pagination
+  const sp = document.getElementById('sparePagination');
+  if (sp) {
+    if (totalPages <= 1) { sp.innerHTML = ''; return; }
+    sp.innerHTML = `
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 18px;border-top:1px solid var(--border);">
+        <button onclick="spareGoPage(${sparePage-1})" ${sparePage===1?'disabled':''} style="background:${sparePage===1?'transparent':'rgba(123,47,255,.08)'};border:1px solid ${sparePage===1?'var(--border)':'rgba(123,47,255,.3)'};color:${sparePage===1?'var(--text-muted)':'var(--accent2)'};border-radius:8px;padding:6px 14px;font-size:.78rem;cursor:${sparePage===1?'default':'pointer'};font-family:inherit;">← Prev</button>
+        <span style="font-size:.75rem;color:var(--text-muted);font-family:'JetBrains Mono',monospace;">Page ${sparePage} of ${totalPages} &nbsp;·&nbsp; ${spareRequests.length} total</span>
+        <button onclick="spareGoPage(${sparePage+1})" ${sparePage===totalPages?'disabled':''} style="background:${sparePage===totalPages?'transparent':'rgba(123,47,255,.08)'};border:1px solid ${sparePage===totalPages?'var(--border)':'rgba(123,47,255,.3)'};color:${sparePage===totalPages?'var(--text-muted)':'var(--accent2)'};border-radius:8px;padding:6px 14px;font-size:.78rem;cursor:${sparePage===totalPages?'default':'pointer'};font-family:inherit;">Next →</button>
+      </div>`;
+  }
+}
+
+function spareGoPage(p) {
+  sparePage = p;
+  renderSpare();
+}
+
+function openSpareInfo(docId) {
+  const r = spareRequests.find(x => x.docId === docId);
+  if (!r) return;
+  const statusColors = { pending:'#f59e0b', fulfilled:'#22c55e', cancelled:'#f87171' };
+  const sColor = statusColors[r.status] || '#888';
+  document.getElementById('spareInfoRef').textContent = r.ref;
+  document.getElementById('spareInfoContent').innerHTML = `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
+      <div style="background:var(--surface3);border-radius:10px;padding:14px;">
+        <div style="font-size:.62rem;color:var(--text-muted);letter-spacing:.5px;margin-bottom:5px;text-transform:uppercase;">Customer</div>
+        <div style="font-weight:600;font-size:.9rem;">${r.name}</div>
+        <a href="tel:${r.phone}" style="display:inline-flex;align-items:center;gap:6px;margin-top:8px;padding:6px 12px;background:rgba(0,229,255,.1);border:1px solid rgba(0,229,255,.3);border-radius:8px;color:var(--accent);font-size:.78rem;text-decoration:none;font-weight:600;">📞 Call ${r.phone}</a>
+      </div>
+      <div style="background:var(--surface3);border-radius:10px;padding:14px;">
+        <div style="font-size:.62rem;color:var(--text-muted);letter-spacing:.5px;margin-bottom:5px;text-transform:uppercase;">Status</div>
+        <div style="font-weight:700;font-size:.9rem;color:${sColor};text-transform:capitalize;">${r.status}</div>
+        <div style="margin-top:8px;width:10px;height:10px;border-radius:50%;background:${sColor};box-shadow:0 0 8px ${sColor};"></div>
+      </div>
+    </div>
+    <div style="background:var(--surface3);border-radius:10px;padding:14px;margin-bottom:10px;">
+      <div style="font-size:.62rem;color:var(--text-muted);letter-spacing:.5px;margin-bottom:5px;text-transform:uppercase;">Requested On</div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:.9rem;font-weight:700;color:var(--accent2);">📅 ${r.date} &nbsp;·&nbsp; ${r.time}</div>
+    </div>
+    <div style="background:var(--surface3);border-radius:10px;padding:14px;margin-bottom:10px;">
+      <div style="font-size:.62rem;color:var(--text-muted);letter-spacing:.5px;margin-bottom:8px;text-transform:uppercase;">Parts Required</div>
+      <div style="font-size:.85rem;line-height:1.7;color:var(--text);">🔩 ${r.parts}</div>
+    </div>
+    ${r.amount && r.amount !== '0' ? `
+    <div style="background:rgba(0,255,136,.06);border:1px solid rgba(0,255,136,.2);border-radius:10px;padding:14px;">
+      <div style="font-size:.62rem;color:#00ff88;letter-spacing:.5px;margin-bottom:5px;text-transform:uppercase;">Amount</div>
+      <div style="font-weight:700;font-size:1.1rem;color:#00ff88;">₹${r.amount}</div>
+    </div>` : ''}
+  `;
+  document.getElementById('spareInfoUpdateBtn').onclick = () => {
+    closeSpareInfo();
+    openSpareStaffModal(docId);
+  };
+  document.getElementById('spareInfoModal').style.display = 'flex';
+}
+
+function closeSpareInfo() {
+  document.getElementById('spareInfoModal').style.display = 'none';
+}
+
+function openSpareStaffModal(docId) {
+  const r = spareRequests.find(x => x.docId === docId);
+  if (!r) return;
+  currentSpareId = docId;
+  document.getElementById('spareStaffModal').style.display = 'flex';
+  document.getElementById('spareModalRef').textContent = r.ref;
+  document.getElementById('spareModalInfo').innerHTML = `<strong>${r.name}</strong> · 📞 ${r.phone}<br><span style="color:var(--text);">${r.parts}</span>`;
+  document.getElementById('spareModalStatus').value = r.status;
+  document.getElementById('spareModalAmount').value = r.amount !== '0' ? r.amount : '';
+}
+
+function closeSpareStaffModal() {
+  document.getElementById('spareStaffModal').style.display = 'none';
+  currentSpareId = null;
+}
+
+async function saveSpareStatus() {
+  if (!currentSpareId) return;
+  const status = document.getElementById('spareModalStatus').value;
+  const amount = document.getElementById('spareModalAmount').value.trim() || '0';
+  try {
+    await getDB().collection('spareRequests').doc(currentSpareId).update({ status, amount });
+    closeSpareStaffModal();
+    showToast('Spare parts request updated!');
+  } catch(e) {
+    console.error(e);
+    alert('Failed to save. Try again.');
+  }
+}
+
+// ===== STAFF DIRECT BOOKING =====
+var saBk = { svc:'', price:'', date:'', time:'', status:'confirmed', customPrice:'', name:'', phone:'', brand:'', model:'', year:'', reg:'', odo:'', notes:'' };
+
+function openStaffAddBooking() {
+  saBk = { svc:'', price:'', date:'', time:'', status:'confirmed', customPrice:'', name:'', phone:'', brand:'', model:'', year:'', reg:'', odo:'', notes:'' };
+
+  // Show modal first so all elements are accessible
+  const modal = document.getElementById('staffAddModal');
+  if (!modal) { console.error('staffAddModal not found'); return; }
+  modal.style.display = 'block';
+  window.scrollTo(0,0);
+
+  // Reset steps
+  ['saStep1','saStep2','saStep3','saStep4','saStepOK'].forEach(id => {
+    const el = document.getElementById(id);
+    if(el) el.classList.remove('active');
+  });
+  const s1 = document.getElementById('saStep1');
+  if(s1) s1.classList.add('active');
+
+  // Reset step nodes
+  ['saSn1','saSn2','saSn3','saSn4'].forEach((id,i) => {
+    const el = document.getElementById(id);
+    if(el) el.className = 'step-node' + (i===0?' active':'');
+  });
+
+  // Reset service cards
+  document.querySelectorAll('#saStep1 .svc-card').forEach(c => c.classList.remove('selected'));
+
+  const s1btn = document.getElementById('saS1btn');
+  if(s1btn) s1btn.disabled = true;
+
+  // Default date = today, time = current rounded to 30min
+  const n = new Date();
+  const dateEl = document.getElementById('saDate');
+  if(dateEl) dateEl.value = n.toISOString().split('T')[0];
+  n.setMinutes(Math.ceil(n.getMinutes()/30)*30,0,0);
+  const timeEl = document.getElementById('saTime');
+  if(timeEl) timeEl.value = n.toTimeString().slice(0,5);
+  // Trigger check so Continue button is enabled immediately
+  saChk2();
+
+  const statusEl = document.getElementById('saStatus');
+  if(statusEl) statusEl.value = 'confirmed';
+  const priceEl = document.getElementById('saPrice');
+  if(priceEl) priceEl.value = '';
+
+  ['saName','saPhone','saModel','saReg','saOdo','saNotes'].forEach(id => {
+    const el = document.getElementById(id);
+    if(el) el.value = '';
+  });
+
+  const brandEl = document.getElementById('saBrand');
+  if(brandEl) brandEl.value = '';
+  const yearEl = document.getElementById('saYear');
+  if(yearEl) yearEl.value = '';
+
+  const submitBtn = document.getElementById('saSubmitBtn');
+  if(submitBtn) { submitBtn.disabled = false; submitBtn.textContent = '⚡ Confirm & Add'; }
+}
+
+function closeStaffAddBooking() {
+  document.getElementById('staffAddModal').style.display = 'none';
+}
+
+function saPick(card, svc, price) {
+  document.querySelectorAll('#saStep1 .svc-card').forEach(c => c.classList.remove('selected'));
+  card.classList.add('selected');
+  saBk.svc = svc; saBk.price = price;
+  document.getElementById('saS1btn').disabled = false;
+}
+
+function saGoStep(n) {
+  const steps = ['saStep1','saStep2','saStep3','saStep4','saStepOK'];
+  const nodes = ['saSn1','saSn2','saSn3','saSn4'];
+  steps.forEach(id => { const el=document.getElementById(id); if(el) el.classList.remove('active'); });
+  const target = document.getElementById('saStep'+n) || document.getElementById('saStepOK');
+  if(target) target.classList.add('active');
+  nodes.forEach((id,i) => {
+    const el = document.getElementById(id);
+    if(!el) return;
+    if(i < n-1) el.className='step-node done';
+    else if(i === n-1) el.className='step-node active';
+    else el.className='step-node';
+  });
+  // Build summary on step 4
+  if(n===4) saRenderSummary();
+  document.getElementById('staffAddModal').scrollTo(0,0);
+  window.scrollTo(0,0);
+}
+
+function saChk2() {
+  const d = document.getElementById('saDate').value;
+  const t = document.getElementById('saTime').value;
+  document.getElementById('saS2btn').disabled = !(d && t);
+  saBk.date = d; saBk.time = t;
+}
+
+function saChk3() {
+  const name = document.getElementById('saName').value.trim();
+  const phone = document.getElementById('saPhone').value.trim();
+  const brand = document.getElementById('saBrand').value;
+  const model = document.getElementById('saModel').value.trim();
+  document.getElementById('saS3btn').disabled = !(name && phone && brand && model);
+}
+
+function saRenderSummary() {
+  const d = document.getElementById('saDate').value;
+  const t = document.getElementById('saTime').value;
+  const cp = document.getElementById('saPrice').value.trim();
+  const status = document.getElementById('saStatus').value;
+  const name = document.getElementById('saName').value.trim();
+  const phone = document.getElementById('saPhone').value.trim();
+  const brand = document.getElementById('saBrand').value;
+  const model = document.getElementById('saModel').value.trim();
+  const year = document.getElementById('saYear').value;
+  const reg = document.getElementById('saReg').value.trim();
+  const odo = document.getElementById('saOdo').value.trim();
+  const notes = document.getElementById('saNotes').value.trim();
+  // Format time
+  const [hh,mm] = t.split(':');
+  const h = parseInt(hh), ampm = h>=12?'PM':'AM';
+  const displayTime = (h%12||12)+':'+mm+' '+ampm;
+  const displayPrice = cp ? '₹'+cp : saBk.price;
+  const statusLabel = {confirmed:'Confirmed',pending:'Pending',inprogress:'In Progress'}[status]||status;
+  document.getElementById('saSummaryBox').innerHTML = `
+    <div class="sum-row"><span class="sum-lbl">Service</span><span class="sum-val">${saBk.svc}</span></div>
+    <div class="sum-row"><span class="sum-lbl">Price</span><span class="sum-val" style="color:var(--accent)">${displayPrice}</span></div>
+    <div class="sum-row"><span class="sum-lbl">Date</span><span class="sum-val">${d}</span></div>
+    <div class="sum-row"><span class="sum-lbl">Time</span><span class="sum-val">${displayTime}</span></div>
+    <div class="sum-row"><span class="sum-lbl">Status</span><span class="sum-val">${statusLabel}</span></div>
+    <div class="sum-row"><span class="sum-lbl">Customer</span><span class="sum-val">${name}</span></div>
+    <div class="sum-row"><span class="sum-lbl">Phone</span><span class="sum-val">${phone}</span></div>
+    <div class="sum-row"><span class="sum-lbl">Scooter</span><span class="sum-val">${brand} ${model}${year?' ('+year+')':''}</span></div>
+    ${reg?`<div class="sum-row"><span class="sum-lbl">Reg No.</span><span class="sum-val">${reg}</span></div>`:''}
+    ${odo?`<div class="sum-row"><span class="sum-lbl">Odometer</span><span class="sum-val">${odo} km</span></div>`:''}
+    ${notes?`<div class="sum-row"><span class="sum-lbl">Notes</span><span class="sum-val">${notes}</span></div>`:''}
+  `;
+}
+
+async function saveStaffBooking() {
+  const btn = document.getElementById('saSubmitBtn');
+  if(btn) { btn.disabled=true; btn.textContent='Saving…'; }
+  const d = document.getElementById('saDate').value;
+  const t = document.getElementById('saTime').value;
+  const cp = document.getElementById('saPrice').value.trim();
+  const status = document.getElementById('saStatus').value;
+  const name = document.getElementById('saName').value.trim();
+  const phone = document.getElementById('saPhone').value.trim();
+  const brand = document.getElementById('saBrand').value;
+  const model = document.getElementById('saModel').value.trim();
+  const year = document.getElementById('saYear').value;
+  const reg = document.getElementById('saReg').value.trim();
+  const odo = document.getElementById('saOdo').value.trim();
+  const notes = document.getElementById('saNotes').value.trim();
+  // Format time
+  const [hh,mm] = t.split(':');
+  const h = parseInt(hh), ampm = h>=12?'PM':'AM';
+  const displayTime = (h%12||12)+':'+mm+' '+ampm;
+  const displayPrice = cp ? '₹'+cp : saBk.price;
+  // Ref
+  let nextNum = jobs.length + 1;
+  while(jobs.find(j=>j.ref==='CAT-'+String(nextNum).padStart(4,'0'))) nextNum++;
+  const ref = 'CAT-'+String(nextNum).padStart(4,'0');
+  try {
+    await getDB().collection('bookings').add({
+      ref, customerName:name, customerPhone:phone,
+      brand, model, year:year||'', reg:reg||'', odometer:odo||'',
+      service:saBk.svc, price:displayPrice, date:d, time:displayTime,
+      notes:notes||'', status, addedByStaff:true,
+      timestamp:new Date().toISOString()
+    });
+    // Show success
+    const steps = ['saStep1','saStep2','saStep3','saStep4'];
+    steps.forEach(id=>{ const el=document.getElementById(id); if(el) el.classList.remove('active'); });
+    document.getElementById('saStepOK').classList.add('active');
+    ['saSn1','saSn2','saSn3','saSn4'].forEach(id=>{ const el=document.getElementById(id); if(el) el.className='step-node done'; });
+    document.getElementById('saRefBadge').textContent = ref;
+    window.scrollTo(0,0);
+  } catch(e) {
+    console.error('Staff booking error:',e);
+    if(btn) { btn.disabled=false; btn.textContent='⚡ Confirm & Add'; }
+    alert('Failed to save. Try again.');
+  }
+}
+
+function saAddAnother() {
+  openStaffAddBooking();
+}
+
+function showExportMenu() {
+  document.getElementById('exportMenuModal').style.display = 'flex';
+}
+function closeExportMenu() {
+  document.getElementById('exportMenuModal').style.display = 'none';
+}
+
+function exportData(range) {
+  closeExportMenu();
+  const n = new Date();
+  const dow = n.getDay() === 0 ? 6 : n.getDay() - 1;
+  const weekStart = new Date(n); weekStart.setDate(n.getDate() - dow); weekStart.setHours(0,0,0,0);
+  const monthStart = new Date(n.getFullYear(), n.getMonth(), 1);
+  const yearStart = new Date(n.getFullYear(), 0, 1);
+
+  let filtered = jobs.slice();
+  if (range === 'week')  filtered = jobs.filter(j => { const d = j.timestamp ? tsToDate(j.timestamp) : null; return d && d >= weekStart; });
+  if (range === 'month') filtered = jobs.filter(j => { const d = j.timestamp ? tsToDate(j.timestamp) : null; return d && d >= monthStart; });
+  if (range === 'year')  filtered = jobs.filter(j => { const d = j.timestamp ? tsToDate(j.timestamp) : null; return d && d >= yearStart; });
+
+  const rows = filtered.map(j => ({
+    'Ref ID': j.ref,
+    'Customer Name': j.name,
+    'Mobile': j.phone || '',
+    'Service': j.svc,
+    'Scooter': j.scooter,
+    'Reg No': j.reg || '',
+    'Odometer': j.odo || '',
+    'Date': j.date || '',
+    'Time': j.time || '',
+    'Quoted Price': j.price || '',
+    'Status': j.status === 'done' ? 'Finished' : j.status === 'inprogress' ? 'In Progress' : j.status.charAt(0).toUpperCase() + j.status.slice(1),
+    'Final Amount': j.finAmount ? '₹' + j.finAmount : '',
+    'Payment Method': j.finPayment || '',
+    'Parts Changed': j.finParts || '',
+    'Technician': j.finTech || '',
+    'Notes': j.lastNote || ''
+  }));
+
+  if (!rows.length) { alert('No data found for selected range.'); return; }
+  const ws = XLSX.utils.json_to_sheet(rows);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Appointments');
+  ws['!cols'] = Object.keys(rows[0]).map(k => ({ wch: Math.max(k.length + 2, 16) }));
+  const label = range === 'week' ? 'This-Week' : range === 'month' ? 'This-Month' : range === 'year' ? 'This-Year' : 'All-Time';
+  const dateStr = n.getFullYear() + '-' + String(n.getMonth()+1).padStart(2,'0') + '-' + String(n.getDate()).padStart(2,'0');
+  XLSX.writeFile(wb, 'CJAT-Appointments-' + label + '-' + dateStr + '.xlsx');
+}
+
+function exportSpare(range) {
+  closeExportMenu();
+  const n = new Date();
+  const dow = n.getDay() === 0 ? 6 : n.getDay() - 1;
+  const weekStart = new Date(n); weekStart.setDate(n.getDate() - dow); weekStart.setHours(0,0,0,0);
+  const monthStart = new Date(n.getFullYear(), n.getMonth(), 1);
+  const yearStart = new Date(n.getFullYear(), 0, 1);
+
+  let filtered = spareRequests.slice();
+  if (range === 'week')  filtered = spareRequests.filter(r => { const d = r.createdAt ? new Date(r.createdAt) : null; return d && d >= weekStart; });
+  if (range === 'month') filtered = spareRequests.filter(r => { const d = r.createdAt ? new Date(r.createdAt) : null; return d && d >= monthStart; });
+  if (range === 'year')  filtered = spareRequests.filter(r => { const d = r.createdAt ? new Date(r.createdAt) : null; return d && d >= yearStart; });
+
+  const rows = filtered.map(r => ({
+    'Ref ID': r.ref,
+    'Customer Name': r.name,
+    'Mobile': r.phone || '',
+    'Parts Required': r.parts || '',
+    'Date': r.date || '',
+    'Time': r.time || '',
+    'Amount': r.amount && r.amount !== '0' ? '₹' + r.amount : '',
+    'Status': r.status.charAt(0).toUpperCase() + r.status.slice(1)
+  }));
+
+  if (!rows.length) { alert('No spare parts requests found for selected range.'); return; }
+  const ws = XLSX.utils.json_to_sheet(rows);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Spare Parts');
+  ws['!cols'] = Object.keys(rows[0]).map(k => ({ wch: Math.max(k.length + 2, 16) }));
+  const label = range === 'week' ? 'This-Week' : range === 'month' ? 'This-Month' : range === 'year' ? 'This-Year' : 'All-Time';
+  const dateStr = n.getFullYear() + '-' + String(n.getMonth()+1).padStart(2,'0') + '-' + String(n.getDate()).padStart(2,'0');
+  XLSX.writeFile(wb, 'CJAT-SparePartsRequests-' + label + '-' + dateStr + '.xlsx');
+}
+
+</script>
+
+<!-- STATUS UPDATE MODAL -->
+<div class="modal-overlay" id="statusModal" style="display:none">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div class="modal-title">Update Job Status</div>
+    <div class="modal-ref" id="modalRef"></div>
+    <div id="modalCustomer" style="font-size:.85rem;color:var(--text-muted);margin-bottom:16px;"></div>
+    <div class="modal-field">
+      <label>Status</label>
+      <select id="modalStatus" onchange="onModalStatusChange()">
+        <option value="pending">Pending</option>
+        <option value="confirmed">Confirmed</option>
+        <option value="inprogress">In Progress</option>
+        <option value="done">Finished</option>
+      </select>
+    </div>
+
+    <!-- FINISHED MANDATORY FIELDS -->
+    <div id="finishedFields" style="display:none;background:rgba(0,255,136,.04);border:1px solid rgba(0,255,136,.18);border-radius:12px;padding:14px;margin-bottom:16px;">
+      <div style="font-size:.68rem;color:var(--charge);font-weight:700;letter-spacing:1px;margin-bottom:12px;display:flex;align-items:center;gap:6px;">
+        <span>✅</span> COMPLETION DETAILS <span style="color:#f87171;font-size:.65rem;">(All fields required)</span>
+      </div>
+      <div class="modal-field" style="margin-bottom:12px;">
+        <label style="color:var(--text-muted);">Total Amount Charged <span style="color:#f87171;">*</span></label>
+        <div style="position:relative;">
+          <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--text-muted);font-size:.85rem;">₹</span>
+          <input id="finAmount" type="number" min="0" placeholder="e.g. 650" oninput="checkFinishedFields()"
+            style="width:100%;background:var(--surface3);border:1px solid var(--border2);border-radius:8px;padding:9px 12px 9px 28px;color:var(--text);font-family:'Outfit',sans-serif;font-size:.88rem;outline:none;"/>
+        </div>
+      </div>
+      <div class="modal-field" style="margin-bottom:12px;">
+        <label style="color:var(--text-muted);">Payment Method <span style="color:#f87171;">*</span></label>
+        <div style="display:flex;gap:8px;">
+          <button id="payBtnCash" onclick="selectPayment('cash')" style="flex:1;padding:9px;border-radius:8px;border:1px solid var(--border2);background:transparent;color:var(--text-muted);font-family:'Outfit',sans-serif;font-size:.82rem;cursor:pointer;transition:all .2s;">💵 Cash</button>
+          <button id="payBtnOnline" onclick="selectPayment('online')" style="flex:1;padding:9px;border-radius:8px;border:1px solid var(--border2);background:transparent;color:var(--text-muted);font-family:'Outfit',sans-serif;font-size:.82rem;cursor:pointer;transition:all .2s;">📲 Online</button>
+          <button id="payBtnBoth" onclick="selectPayment('both')" style="flex:1;padding:9px;border-radius:8px;border:1px solid var(--border2);background:transparent;color:var(--text-muted);font-family:'Outfit',sans-serif;font-size:.82rem;cursor:pointer;transition:all .2s;">🔀 Both</button>
+        </div>
+        <input type="hidden" id="finPayment" value="" oninput="checkFinishedFields()"/>
+      </div>
+      <div class="modal-field" style="margin-bottom:12px;">
+        <label style="color:var(--text-muted);">Parts Changed <span style="color:#f87171;">*</span></label>
+        <textarea id="finParts" rows="2" placeholder="e.g. Brake pads, Motor belt, Battery cells..." oninput="checkFinishedFields()"
+          style="width:100%;background:var(--surface3);border:1px solid var(--border2);border-radius:8px;padding:9px 12px;color:var(--text);font-family:'Outfit',sans-serif;font-size:.85rem;outline:none;resize:none;"></textarea>
+        <div style="font-size:.65rem;color:var(--text-muted);margin-top:3px;">Enter "None" if no parts were replaced.</div>
+      </div>
+      <div class="modal-field" style="margin-bottom:0;">
+        <label style="color:var(--text-muted);">Technician Name <span style="color:#f87171;">*</span></label>
+        <input id="finTech" type="text" placeholder="e.g. Ravi, Kumar..." oninput="checkFinishedFields()"
+          style="width:100%;background:var(--surface3);border:1px solid var(--border2);border-radius:8px;padding:9px 12px;color:var(--text);font-family:'Outfit',sans-serif;font-size:.88rem;outline:none;"/>
+      </div>
+    </div>
+
+    <div class="modal-field">
+      <label>Notes for Customer (optional)</label>
+      <textarea id="modalNotes" placeholder="e.g. Your scooter is ready for pickup. Battery replaced successfully." oninput="onModalStatusChange()"></textarea>
+    </div>
+    <a id="waUpdateBtn" href="#" target="_blank" class="wa-update-btn hidden">
+      📱 Send WhatsApp Update to Customer
+    </a>
+    <div id="finishedWarning" style="display:none;padding:8px 12px;background:rgba(248,113,113,.08);border:1px solid rgba(248,113,113,.25);border-radius:8px;font-size:.75rem;color:#f87171;margin-bottom:12px;">
+      ⚠️ Please fill in all completion details before marking as Finished.
+    </div>
+    <div class="modal-btns">
+      <button class="btn btn-ghost" style="flex:1" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" style="flex:2" onclick="saveStatus()">Save Status</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- CUSTOMER CANCEL MODAL -->
+<div class="modal-overlay" id="custCancelModal" style="display:none" onclick="if(event.target===this)closeCustomerCancelModal()">
+  <div class="modal-box" style="max-width:380px;">
+    <button class="modal-close" onclick="closeCustomerCancelModal()">&#x2715;</button>
+    <div style="font-size:2rem;text-align:center;margin-bottom:10px;">&#x274C;</div>
+    <div class="modal-title" style="text-align:center;color:#f87171;">Cancel Your Booking?</div>
+    <div style="text-align:center;margin:10px 0 6px;">
+      <span id="custCancelRef" style="font-family:'JetBrains Mono',monospace;font-size:.82rem;color:var(--accent);"></span>
+    </div>
+    <div style="background:rgba(248,113,113,.06);border:1px solid rgba(248,113,113,.2);border-radius:10px;padding:14px;text-align:center;font-size:.78rem;color:var(--text-muted);margin:16px 0;line-height:1.7;">
+      Your appointment slot will be <strong style="color:#f87171;">released</strong> and made available for others.<br>You can book again anytime.
+    </div>
+    <div class="modal-btns">
+      <button class="btn btn-ghost" style="flex:1" onclick="closeCustomerCancelModal()">Keep Booking</button>
+      <button class="btn" style="flex:1;background:rgba(248,113,113,.15);color:#f87171;border:1px solid rgba(248,113,113,.3);" onclick="doCustomerCancel()">Yes, Cancel It</button>
+    </div>
+  </div>
+</div>
+
+<!-- SEARCH PROFILE MODAL -->
+<div class="modal-overlay" id="searchProfileModal" style="display:none" onclick="if(event.target===this)closeSearchProfile()">
+  <div class="modal-box" style="max-width:460px;max-height:88vh;overflow-y:auto;">
+    <button class="modal-close" onclick="closeSearchProfile()">✕</button>
+    <div class="modal-title" style="color:var(--accent);">👤 Customer Profile</div>
+    <div id="spContent" style="margin-top:4px;"></div>
+    <div class="modal-btns" style="margin-top:16px;position:sticky;bottom:0;background:var(--surface2);padding-top:12px;">
+      <button class="btn btn-ghost" style="flex:1" onclick="closeSearchProfile()">Close</button>
+      <button id="spUpdateBtn" class="btn btn-primary" style="flex:1;">✏️ Update Status</button>
+    </div>
+  </div>
+</div>
+
+<!-- BOOKING INFO MODAL -->
+<div class="modal-overlay" id="bookingInfoModal" style="display:none" onclick="if(event.target===this)closeBookingInfo()">
+  <div class="modal-box" style="max-width:420px;">
+    <button class="modal-close" onclick="closeBookingInfo()">✕</button>
+    <div class="modal-title" style="color:var(--accent);">📋 Booking Details</div>
+    <div id="biRef" style="font-family:'JetBrains Mono',monospace;font-size:.75rem;color:var(--text-muted);margin-bottom:16px;"></div>
+    <div id="biContent"></div>
+    <div class="modal-btns" style="margin-top:16px;">
+      <button class="btn btn-ghost" style="flex:1" onclick="closeBookingInfo()">Close</button>
+      <button id="biUpdateBtn" class="btn btn-primary" style="flex:1;">✏️ Update Status</button>
+    </div>
+  </div>
+</div>
+
+<!-- CANCEL CONFIRM MODAL -->
+<div class="modal-overlay" id="cancelConfirmModal" style="display:none">
+  <div class="modal-box" style="max-width:380px;">
+    <button class="modal-close" onclick="closeCancelConfirm()">✕</button>
+    <div style="font-size:2rem;text-align:center;margin-bottom:10px;">❌</div>
+    <div class="modal-title" style="text-align:center;color:#f87171;">Cancel Booking?</div>
+    <div style="text-align:center;margin:10px 0 6px;">
+      <span id="cancelConfirmRef" style="font-family:'JetBrains Mono',monospace;font-size:.82rem;color:var(--accent);"></span>
+    </div>
+    <div id="cancelConfirmName" style="text-align:center;font-size:.8rem;color:var(--text-muted);margin-bottom:18px;"></div>
+    <div style="background:rgba(248,113,113,.06);border:1px solid rgba(248,113,113,.2);border-radius:10px;padding:12px;text-align:center;font-size:.78rem;color:#f87171;margin-bottom:20px;line-height:1.6;">
+      ⚠️ This will cancel the appointment and <strong>free up the slot</strong> for new bookings.
+    </div>
+    <div class="modal-btns">
+      <button class="btn btn-ghost" style="flex:1" onclick="closeCancelConfirm()">Keep Booking</button>
+      <button class="btn" style="flex:1;background:rgba(248,113,113,.15);color:#f87171;border:1px solid rgba(248,113,113,.3);" onclick="doStaffCancel()">Yes, Cancel It</button>
+    </div>
+  </div>
+</div>
+
+<!-- PIN MODAL -->
+<div class="pin-overlay" id="pinModal" style="display:none">
+  <div class="pin-box">
+    <div class="pin-icon">🔐</div>
+    <div class="pin-title">STAFF ACCESS</div>
+    <div class="pin-sub">Enter your PIN to continue</div>
+    <div class="pin-dots">
+      <div class="pin-dot" id="pd0"></div>
+      <div class="pin-dot" id="pd1"></div>
+      <div class="pin-dot" id="pd2"></div>
+      <div class="pin-dot" id="pd3"></div>
+    </div>
+    <div class="pin-grid">
+      <button class="pin-key" onclick="pinKey('1')">1</button>
+      <button class="pin-key" onclick="pinKey('2')">2</button>
+      <button class="pin-key" onclick="pinKey('3')">3</button>
+      <button class="pin-key" onclick="pinKey('4')">4</button>
+      <button class="pin-key" onclick="pinKey('5')">5</button>
+      <button class="pin-key" onclick="pinKey('6')">6</button>
+      <button class="pin-key" onclick="pinKey('7')">7</button>
+      <button class="pin-key" onclick="pinKey('8')">8</button>
+      <button class="pin-key" onclick="pinKey('9')">9</button>
+      <button class="pin-key del" onclick="pinKey('clear')">✕</button>
+      <button class="pin-key" onclick="pinKey('0')">0</button>
+      <button class="pin-key del" onclick="pinKey('del')">⌫</button>
+    </div>
+    <div class="pin-error-msg" id="pinError"></div>
+    <button class="pin-cancel" onclick="closePinModal()">Cancel</button>
+  </div>
+</div>
+
+<!-- SPARE PARTS STAFF UPDATE MODAL -->
+<div class="modal-overlay" id="spareStaffModal" style="display:none" onclick="if(event.target===this)closeSpareStaffModal()">
+  <div class="modal-box" style="max-width:400px;">
+    <button class="modal-close" onclick="closeSpareStaffModal()">✕</button>
+    <div class="modal-title">🔩 Spare Parts — Update</div>
+    <div class="modal-ref" id="spareModalRef"></div>
+    <div id="spareModalInfo" style="font-size:.82rem;color:var(--text-muted);margin:8px 0 16px;line-height:1.6;"></div>
+    <div class="modal-field"><label>Status</label>
+      <select id="spareModalStatus">
+        <option value="pending">Pending</option>
+        <option value="fulfilled">Fulfilled ✅</option>
+        <option value="cancelled">Cancelled</option>
+      </select>
+    </div>
+    <div class="modal-field">
+      <label style="color:var(--text-muted);">Amount Collected ₹</label>
+      <div style="position:relative;">
+        <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--text-muted);font-size:.85rem;font-family:'JetBrains Mono',monospace;">₹</span>
+        <input id="spareModalAmount" type="number" min="0" placeholder="e.g. 450"
+          style="width:100%;background:var(--surface3);border:1px solid var(--border2);border-radius:8px;padding:9px 12px 9px 28px;color:var(--text);font-family:'Outfit',sans-serif;font-size:.88rem;outline:none;"/>
+      </div>
+    </div>
+    <div class="modal-btns">
+      <button class="btn btn-ghost" style="flex:1" onclick="closeSpareStaffModal()">Cancel</button>
+      <button class="btn btn-primary" style="flex:2" onclick="saveSpareStatus()">💾 Save</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- STAFF ADD BOOKING MODAL -->
+<!-- STAFF ADD BOOKING — full screen booking-card style -->
+<div id="staffAddModal" style="display:none;position:fixed;inset:0;z-index:900;background:#050810;overflow-y:auto;">
+  <div style="position:sticky;top:0;z-index:10;display:flex;align-items:center;justify-content:space-between;padding:0 1.5rem;height:56px;background:rgba(5,8,16,.95);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);">
+    <div style="font-family:'Rajdhani',sans-serif;font-size:1rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent);">⚡ Add Booking</div>
+    <div style="display:flex;align-items:center;gap:6px;">
+      <span style="font-family:'JetBrains Mono',monospace;font-size:.62rem;color:var(--text-muted);letter-spacing:1px;">STAFF ENTRY</span>
+      <button onclick="closeStaffAddBooking()" style="background:rgba(248,113,113,.1);border:1px solid rgba(248,113,113,.25);color:#f87171;border-radius:6px;padding:4px 12px;font-size:.8rem;cursor:pointer;font-family:'Outfit',sans-serif;">✕ Close</button>
+    </div>
+  </div>
+
+  <div class="booking-wrap" style="padding-top:32px;">
+    <div class="booking-card">
+      <div class="booking-header">
+        <h2>⚡ New Appointment</h2>
+        <div class="steps-track">
+          <div class="step-node active" id="saSn1"></div>
+          <div class="step-node" id="saSn2"></div>
+          <div class="step-node" id="saSn3"></div>
+          <div class="step-node" id="saSn4"></div>
+        </div>
+      </div>
+      <div class="booking-body">
+
+        <!-- SA STEP 1: SERVICE -->
+        <div class="form-step active" id="saStep1">
+          <div class="step-label">01 — Select Service</div>
+          <div class="svc-grid">
+            <div class="svc-card" onclick="saPick(this,'General Service','₹450')">
+              <div class="svc-icon">🛵</div>
+              <div class="svc-name">General Service</div>
+              <div class="svc-price">₹450</div>
+            </div>
+            <div class="svc-card" onclick="saPick(this,'Vehicle Checking','₹150 – ₹450')">
+              <div class="svc-icon">🔍</div>
+              <div class="svc-name">Vehicle Checking</div>
+              <div class="svc-price">₹150 – ₹450</div>
+            </div>
+            <div class="svc-card" onclick="saPick(this,'Other Services','₹150 – ₹950')">
+              <div class="svc-icon">🔧</div>
+              <div class="svc-name">Other Services</div>
+              <div class="svc-price">₹150 – ₹950</div>
+            </div>
+            <div class="svc-card" onclick="saPick(this,'Motor Servicing','₹650')">
+              <div class="svc-icon">⚡</div>
+              <div class="svc-name">Motor Servicing</div>
+              <div class="svc-price">₹650</div>
+            </div>
+            <div class="svc-card" onclick="saPick(this,'Brake Replacement','₹350 – ₹550')">
+              <div class="svc-icon">🛑</div>
+              <div class="svc-name">Brake Replacement</div>
+              <div class="svc-price">₹350 – ₹550</div>
+            </div>
+            <div class="svc-card" onclick="saPick(this,'Oben General Service','₹698')">
+              <div class="svc-icon">🔋</div>
+              <div class="svc-name">Oben General Service</div>
+              <div class="svc-price">₹698</div>
+            </div>
+            <div class="svc-card" onclick="saPick(this,'Road Side Assistance','₹650 & above')">
+              <div class="svc-icon">🚨</div>
+              <div class="svc-name">Road Side Assistance</div>
+              <div class="svc-price">₹650 &amp; above</div>
+            </div>
+          </div>
+          <div class="btn-row"><button class="btn btn-primary" id="saS1btn" onclick="saGoStep(2)" disabled>Continue →</button></div>
+        </div>
+
+        <!-- SA STEP 2: DATE & TIME (free pick) -->
+        <div class="form-step" id="saStep2">
+          <div class="step-label">02 — Pick Date &amp; Time</div>
+          <div class="fg">
+            <div class="field">
+              <label>Date</label>
+              <input id="saDate" type="date" onchange="saChk2()"/>
+            </div>
+            <div class="field">
+              <label>Time</label>
+              <input id="saTime" type="time" onchange="saChk2()"/>
+            </div>
+          </div>
+          <div class="fg">
+            <div class="field">
+              <label>Initial Status</label>
+              <select id="saStatus">
+                <option value="confirmed">Confirmed</option>
+                <option value="pending">Pending</option>
+                <option value="inprogress">In Progress</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Custom Price <span style="color:var(--text-muted);font-weight:400;text-transform:none;letter-spacing:0">(optional)</span></label>
+              <div style="position:relative;">
+                <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--text-muted);font-size:.85rem;">₹</span>
+                <input id="saPrice" type="number" placeholder="override price" style="padding-left:28px;width:100%;background:var(--surface2);border:1px solid var(--border2);border-radius:8px;padding:10px 12px 10px 28px;color:var(--text);font-family:'Outfit',sans-serif;font-size:.9rem;outline:none;"/>
+              </div>
+            </div>
+          </div>
+          <div class="btn-row">
+            <button class="btn btn-ghost" onclick="saGoStep(1)">← Back</button>
+            <button class="btn btn-primary" id="saS2btn" onclick="saGoStep(3)" disabled>Continue →</button>
+          </div>
+        </div>
+
+        <!-- SA STEP 3: CUSTOMER DETAILS -->
+        <div class="form-step" id="saStep3">
+          <div class="step-label">03 — Customer Details</div>
+          <div class="fg">
+            <div class="field"><label>Customer Name</label><input id="saName" placeholder="Arjun Sharma" oninput="saChk3()"/></div>
+            <div class="field"><label>Phone</label><input id="saPhone" type="tel" placeholder="+91 98765 43210" oninput="saChk3()"/></div>
+          </div>
+          <div class="fg">
+            <div class="field">
+              <label>Scooter Brand</label>
+              <select id="saBrand" onchange="saChk3()">
+                <option value="">Select brand</option>
+                <option>Okinawa</option><option>Battre</option><option>Bounce Infinity</option>
+                <option>Zelio</option><option>Oben</option><option>Others</option>
+              </select>
+            </div>
+            <div class="field"><label>Model</label><input id="saModel" placeholder="S1 Pro, 450X…" oninput="saChk3()"/></div>
+          </div>
+          <div class="fg">
+            <div class="field">
+              <label>Year</label>
+              <select id="saYear">
+                <option value="">Year</option>
+              </select>
+              <script>
+                (function(){
+                  var sel = document.getElementById('saYear');
+                  var cy = new Date().getFullYear();
+                  for(var y=cy; y>=2018; y--){
+                    var o = document.createElement('option');
+                    o.value = y; o.text = y;
+                    sel.appendChild(o);
+                  }
+                  var old = document.createElement('option');
+                  old.value='Older'; old.text='Older';
+                  sel.appendChild(old);
+                })();
+              </script>
+            </div>
+            <div class="field"><label>Registration No. <span style="color:var(--text-muted);font-weight:400;text-transform:none;letter-spacing:0">(optional)</span></label><input id="saReg" placeholder="AP 09 EV 0001"/></div>
+          </div>
+          <div class="fg full">
+            <div class="field"><label>Odometer (km)</label><input id="saOdo" type="number" placeholder="e.g. 4200"/></div>
+          </div>
+          <div class="fg full">
+            <div class="field"><label>Issue Description <span style="color:var(--text-muted);font-weight:400;text-transform:none;letter-spacing:0">(optional)</span></label><textarea id="saNotes" placeholder="Describe any problems — range loss, charging issues, unusual sounds…"></textarea></div>
+          </div>
+          <div class="btn-row">
+            <button class="btn btn-ghost" onclick="saGoStep(2)">← Back</button>
+            <button class="btn btn-primary" id="saS3btn" onclick="saGoStep(4)" disabled>Review →</button>
+          </div>
+        </div>
+
+        <!-- SA STEP 4: SUMMARY -->
+        <div class="form-step" id="saStep4">
+          <div class="step-label">04 — Confirm Booking</div>
+          <div class="summary-box" id="saSummaryBox"></div>
+          <div class="btn-row">
+            <button class="btn btn-ghost" onclick="saGoStep(3)">← Edit</button>
+            <button class="btn btn-primary" id="saSubmitBtn" onclick="saveStaffBooking()">⚡ Confirm &amp; Add</button>
+          </div>
+        </div>
+
+        <!-- SA SUCCESS -->
+        <div class="form-step" id="saStepOK">
+          <div class="success-wrap">
+            <div class="success-bolt">⚡</div>
+            <h3>BOOKING ADDED</h3>
+            <p>Appointment saved successfully.</p>
+            <div class="ref-badge" id="saRefBadge"></div>
+            <div class="charge-bar"><div class="charge-fill"></div></div>
+            <div class="btn-row" style="justify-content:center;margin-top:24px;">
+              
+              <button class="btn btn-primary" style="flex:0 0 auto" onclick="closeStaffAddBooking()">✅ Done</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+    <!-- FOOTER -->
+    <div style="margin-top:40px;padding:28px 24px;border-top:1px solid var(--border);text-align:center;background:var(--surface);">
+      <div style="font-family:'Rajdhani',sans-serif;font-size:1.1rem;font-weight:700;letter-spacing:2px;color:var(--accent);margin-bottom:6px;">CHIRANJEEVA <span style="color:var(--text-muted);">AUTO TECH</span></div>
+      <div style="font-size:.75rem;color:var(--text-muted);margin-bottom:6px;">⚡ Certified EV Scooter Service Centre</div>
+      <a href="tel:7494845484" style="display:inline-flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--accent);text-decoration:none;margin-bottom:10px;">📞 74948 45484</a>
+      <div style="font-size:.68rem;color:var(--text-muted);opacity:.5;margin-top:6px;">© 2026 Chiranjeeva Auto Tech · All rights reserved</div>
+    </div>
+<!-- SPARE PARTS INFO MODAL -->
+<div class="modal-overlay" id="spareInfoModal" style="display:none" onclick="if(event.target===this)closeSpareInfo()">
+  <div class="modal-box" style="max-width:420px;">
+    <button class="modal-close" onclick="closeSpareInfo()">✕</button>
+    <div class="modal-title">🔩 Spare Parts Request</div>
+    <div class="modal-ref" id="spareInfoRef"></div>
+    <div id="spareInfoContent" style="margin-top:12px;"></div>
+    <div class="modal-btns" style="margin-top:16px;">
+      <button class="btn btn-ghost" style="flex:1" onclick="closeSpareInfo()">Close</button>
+      <button class="btn btn-primary" style="flex:2" id="spareInfoUpdateBtn">✏️ Update Status</button>
+    </div>
+  </div>
+</div>
+
+<!-- EXPORT MENU MODAL -->
+<div class="modal-overlay" id="exportMenuModal" style="display:none" onclick="if(event.target===this)closeExportMenu()">
+  <div class="modal-box" style="max-width:380px;">
+    <button class="modal-close" onclick="closeExportMenu()">✕</button>
+    <div class="modal-title">📥 Export to Excel</div>
+    <div style="font-size:.78rem;color:var(--text-muted);margin:8px 0 16px;">File downloads as .xlsx — opens in Excel or Google Sheets.</div>
+
+    <!-- Appointments Section -->
+    <div style="font-size:.65rem;color:var(--accent);font-family:'JetBrains Mono',monospace;letter-spacing:1px;margin-bottom:8px;">⚡ APPOINTMENTS</div>
+    <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px;">
+      <button onclick="exportData('week')" style="background:rgba(0,229,255,.06);border:1px solid rgba(0,229,255,.2);color:var(--text);border-radius:10px;padding:12px 16px;text-align:left;cursor:pointer;font-family:inherit;">
+        <div style="font-weight:600;font-size:.85rem;margin-bottom:2px;">📅 This Week</div>
+        <div style="font-size:.72rem;color:var(--text-muted);">Appointments from Mon–today</div>
+      </button>
+      <button onclick="exportData('month')" style="background:rgba(0,229,255,.06);border:1px solid rgba(0,229,255,.2);color:var(--text);border-radius:10px;padding:12px 16px;text-align:left;cursor:pointer;font-family:inherit;">
+        <div style="font-weight:600;font-size:.85rem;margin-bottom:2px;">🗓️ This Month</div>
+        <div style="font-size:.72rem;color:var(--text-muted);">All appointments this month</div>
+      </button>
+      <button onclick="exportData('year')" style="background:rgba(0,229,255,.06);border:1px solid rgba(0,229,255,.2);color:var(--text);border-radius:10px;padding:12px 16px;text-align:left;cursor:pointer;font-family:inherit;">
+        <div style="font-weight:600;font-size:.85rem;margin-bottom:2px;">📆 This Year</div>
+        <div style="font-size:.72rem;color:var(--text-muted);">All appointments this year</div>
+      </button>
+      <button onclick="exportData('all')" style="background:rgba(0,229,255,.06);border:1px solid rgba(0,229,255,.2);color:var(--text);border-radius:10px;padding:12px 16px;text-align:left;cursor:pointer;font-family:inherit;">
+        <div style="font-weight:600;font-size:.85rem;margin-bottom:2px;">📋 All Time</div>
+        <div style="font-size:.72rem;color:var(--text-muted);">Complete booking history</div>
+      </button>
+    </div>
+
+    <!-- Spare Parts Section -->
+    <div style="font-size:.65rem;color:var(--accent2);font-family:'JetBrains Mono',monospace;letter-spacing:1px;margin-bottom:8px;">🔩 SPARE PARTS REQUESTS</div>
+    <div style="display:flex;flex-direction:column;gap:8px;">
+      <button onclick="exportSpare('week')" style="background:rgba(123,47,255,.06);border:1px solid rgba(123,47,255,.2);color:var(--text);border-radius:10px;padding:12px 16px;text-align:left;cursor:pointer;font-family:inherit;">
+        <div style="font-weight:600;font-size:.85rem;margin-bottom:2px;">📅 This Week</div>
+        <div style="font-size:.72rem;color:var(--text-muted);">Spare requests from Mon–today</div>
+      </button>
+      <button onclick="exportSpare('month')" style="background:rgba(123,47,255,.06);border:1px solid rgba(123,47,255,.2);color:var(--text);border-radius:10px;padding:12px 16px;text-align:left;cursor:pointer;font-family:inherit;">
+        <div style="font-weight:600;font-size:.85rem;margin-bottom:2px;">🗓️ This Month</div>
+        <div style="font-size:.72rem;color:var(--text-muted);">All spare requests this month</div>
+      </button>
+      <button onclick="exportSpare('year')" style="background:rgba(123,47,255,.06);border:1px solid rgba(123,47,255,.2);color:var(--text);border-radius:10px;padding:12px 16px;text-align:left;cursor:pointer;font-family:inherit;">
+        <div style="font-weight:600;font-size:.85rem;margin-bottom:2px;">📆 This Year</div>
+        <div style="font-size:.72rem;color:var(--text-muted);">All spare requests this year</div>
+      </button>
+      <button onclick="exportSpare('all')" style="background:rgba(123,47,255,.06);border:1px solid rgba(123,47,255,.2);color:var(--text);border-radius:10px;padding:12px 16px;text-align:left;cursor:pointer;font-family:inherit;">
+        <div style="font-weight:600;font-size:.85rem;margin-bottom:2px;">📋 All Time</div>
+        <div style="font-size:.72rem;color:var(--text-muted);">Complete spare parts history</div>
+      </button>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
